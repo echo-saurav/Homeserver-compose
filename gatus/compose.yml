@@ -1,0 +1,64 @@
+
+services:
+  gatus:
+    image: twinproduction/gatus
+    container_name: gatus
+    restart: always
+    networks:
+      - traefik-net
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - 9342:8080
+    volumes:
+      - ./config.yaml:/config/config.yaml
+    environment:
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=gatus
+      - DISCORD_WEBHOOK=${GATUS_DISCORD_WEBHOOK}
+      # tacking sites
+      - GATUS_HOMEPAGE=${GATUS_HOMEPAGE}
+      - GATUS_JELLYFIN=${GATUS_JELLYFIN}
+      - GATUS_NEXTCLOUD=${GATUS_NEXTCLOUD}
+      - GATUS_IMMICH=${GATUS_IMMICH}
+      - GATUS_N8N=${GATUS_N8N}
+    labels:
+      - "traefik.enable=true" 
+      # https
+      - "traefik.http.routers.gatus.rule=Host(`gatus.home`)"      
+      - "traefik.http.routers.gatus.entrypoints=websecure"      
+      - 'traefik.http.routers.gatus.tls=true'
+      - "traefik.http.services.gatus.loadbalancer.server.port=8080"
+      # http
+      - "traefik.http.routers.gatus-insecure.rule=Host(`gatus.home`)"
+      - "traefik.http.routers.gatus-insecure.entrypoints=web"
+
+
+  postgres:
+    image: postgres:16-alpine 
+    container_name: postgres-gatus
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    volumes:
+      - ./data/postgres/:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_DB=gatus
+      - POSTGRES_USER=username
+      - POSTGRES_PASSWORD=password
+      - TZ=${TZ}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s 
+
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
