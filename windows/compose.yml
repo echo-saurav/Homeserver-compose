@@ -1,0 +1,32 @@
+---
+services:
+  windows:
+    image: dockurr/windows
+    container_name: windows
+    devices:
+      - /dev/kvm
+    cap_add:
+      - NET_ADMIN
+    ports:
+      - 8006:8006
+      - 3389:3389/tcp
+      - 3389:3389/udp
+    stop_grace_period: 2m
+    restart: unless-stopped
+    environment:
+      VERSION: "win11"
+      RAM_SIZE: "4G"
+      CPU_CORES: "4"
+      # DHCP: "Y"
+    device_cgroup_rules:
+      - 'c *:* rwm'
+    volumes:
+      - ./data/storage/:/storage
+      - ./data/shared:/storage/shared
+    # networks:
+    #   vlan:
+    #     ipv4_address: 192.168.0.100    
+
+# networks:
+#   vlan:
+#     external: true
