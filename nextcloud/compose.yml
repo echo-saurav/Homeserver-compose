@@ -1,0 +1,90 @@
+
+services:
+  nextcloud:
+    image: lscr.io/linuxserver/nextcloud:latest
+    container_name: nextcloud
+    depends_on:
+      - postgres
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    volumes:
+      - ./data/nextcloud-config/:/config
+      - ./data/nextcloud-data/:/data
+    ports:
+      - 3982:443
+    networks:
+      - traefik-net
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"  
+      # https
+      # - "traefik.http.routers.nextcloud.rule=Host(`${DUCK_NEXT}`) || Host(`nextcloud.home`)"
+      # adguard domain
+      - "traefik.http.routers.nextcloud-local.rule=Host(`nextcloud.home`)"
+      - "traefik.http.routers.nextcloud-local.entrypoints=websecure"
+      - "traefik.http.routers.nextcloud-local.tls=true"
+      # duck dns
+      - "traefik.http.routers.nextcloud.rule=Host(`${DUCK_NEXT}`)"
+      - "traefik.http.routers.nextcloud.entrypoints=websecure"
+      - "traefik.http.routers.nextcloud.tls=true"
+      - "traefik.http.services.nextcloud.loadbalancer.server.port=443"
+      # duck dns ssl
+      - "traefik.http.routers.nextcloud.tls.certresolver=myresolver"
+      # # ignore nextcloud's https
+      - "traefik.http.services.nextcloud.loadbalancer.serverstransport=ignorecert@file"
+      - "traefik.http.services.nextcloud.loadbalancer.server.scheme=https"
+      # http
+      - "traefik.http.routers.nextcloud-insecure.rule=Host(`${DUCK_NEXT}`)"
+      - "traefik.http.routers.nextcloud-insecure.entrypoints=web"
+      # nextcloud thing
+      # Middleware for setting the X-Frame-Options header
+      - "traefik.http.middlewares.next_hsts.headers.framedeny=false"
+      - "traefik.http.middlewares.next_hsts.headers.customFrameOptionsValue=sameorigin"
+      - "traefik.http.middlewares.next_hsts.headers.browserxssfilter=true"
+      - "traefik.http.middlewares.next_hsts.headers.STSPreload=true"
+      - "traefik.http.middlewares.next_hsts.headers.STSSeconds=31536000"
+      # reverse proxy ,cal dev
+      - "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.permanent=true"
+      - "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.regex='https://(.*)/.well-known/(?:card|cal)dav'"
+      - "traefik.http.middlewares.nextcloud_redirectregex.redirectregex.replacement='https://$${1}/remote.php/dav'"
+      # set middlewares
+      - "traefik.http.routers.nextcloud.middlewares=nextcloud_redirectregex,next_hsts"
+      - "traefik.http.routers.nextcloud-insecure.middlewares=nextcloud_redirectregex,next_hsts"
+      - "traefik.http.routers.nextcloud-local.middlewares=nextcloud_redirectregex,next_hsts"      
+
+  postgres:
+    image: postgres:16-alpine 
+    container_name: postgres-nextcloud
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    volumes:
+      - ./data/postgres/:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_PASSWORD=postgres-nextcloud
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=nextcloud
+      - TZ=${TZ}
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s 
+
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
+
+
+
+
+
+
+
+

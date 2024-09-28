@@ -1,0 +1,36 @@
+
+services:
+  portainer-ce:
+    image: portainer/portainer-ce:latest
+    container_name: portainer-ce
+    restart: always
+    networks:
+      - traefik-net
+    ports:
+      # for local Portainer to communicate with Cloud based portainer
+      # - 8005:8000
+      - 9000:9443
+    volumes:
+      - ./data/portainer/:/data
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.portainer.rule=Host(`portainer.home`)"      
+      - "traefik.http.routers.portainer.entrypoints=websecure"      
+      - "traefik.http.routers.portainer.tls=true"     
+      - "traefik.http.services.portainer.loadbalancer.server.port=9443"
+      # http
+      # - "traefik.http.routers.portainer-insecure.rule=Host(`portainer.home`)"
+      # - "traefik.http.routers.portainer-insecure.entrypoints=web"
+      # portainer have its own ssl
+      - "traefik.http.services.portainer.loadbalancer.serverstransport=ignorecert@file"
+      - "traefik.http.services.portainer.loadbalancer.server.scheme=https"
+
+        
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
+
