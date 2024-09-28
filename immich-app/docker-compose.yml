@@ -1,0 +1,84 @@
+
+services:
+  immich-server:
+    container_name: immich_server
+    image: ghcr.io/immich-app/immich-server:${IMMICH_VERSION:-release}
+    ports:
+      - 2283:3001
+    networks:
+      - traefik-net
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - ~/storage/private/photos/:/mnt/media/private-photos:ro
+      - ~/storage/private/macbook/:/mnt/media/macbook:ro
+      - ~/storage/private/obsidian/ObsidianNotes/media:/mnt/media/obsidian:ro
+      - ~/storage/private/youtube-dl:/mnt/media/youtube-dl:ro
+    env_file:
+      - .env
+    depends_on:
+      - redis
+      - database
+    restart: always
+    devices:
+      - /dev/dri:/dev/dri
+    labels:
+      - "traefik.enable=true"
+      # adguard domain
+      # secure
+      - "traefik.http.routers.immich-local.rule=Host(`photos.home`)"
+      - "traefik.http.routers.immich-local.entrypoints=websecure"
+      - "traefik.http.routers.immich-local.tls=true"
+      # insecure
+      - "traefik.http.routers.immich-local-insecure.rule=Host(`photos.home`)"
+      - "traefik.http.routers.immich-local-insecure.entrypoints=web"
+      # https
+      - "traefik.http.routers.immich.rule=Host(`${DUCK_IMMICH}`)"
+      - "traefik.http.routers.immich.entrypoints=websecure"
+      - "traefik.http.routers.immich.tls=true"
+      - "traefik.http.routers.immich.tls.certresolver=myresolver"
+      - "traefik.http.services.immich.loadbalancer.server.port=3001"
+      # http
+      - "traefik.http.routers.immich-insecure.rule=Host(`${DUCK_IMMICH}`)"
+      - "traefik.http.routers.immich-insecure.entrypoints=web"
+
+
+  immich-machine-learning:
+    container_name: immich_machine_learning
+    networks:
+      - traefik-net
+    image: ghcr.io/immich-app/immich-machine-learning:${IMMICH_VERSION:-release}
+    volumes:
+      - ${docker_data_dir}/immich-machine-learning:/cache
+    env_file:
+      - .env
+    restart: always
+
+  redis:
+    container_name: immich_redis
+    networks:
+      - traefik-net
+    image: redis:6.2-alpine@sha256:c5a607fb6e1bb15d32bbcf14db22787d19e428d59e31a5da67511b49bb0f1ccc
+    restart: always
+
+  database:
+    container_name: immich_postgres
+    image: tensorchord/pgvecto-rs:pg14-v0.2.0@sha256:90724186f0a3517cf6914295b5ab410db9ce23190a2d9d0b9dd6463e3fa298f0
+    env_file:
+      - .env
+    networks:
+      - traefik-net
+    environment:
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_USER: ${DB_USERNAME}
+      POSTGRES_DB: ${DB_DATABASE_NAME}
+    volumes:
+      - ${docker_data_dir}/database:/var/lib/postgresql/data
+    restart: always
+
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+

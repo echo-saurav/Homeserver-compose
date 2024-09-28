@@ -1,0 +1,4 @@
+
+# remove .env from gitignore for immich
+# because its different from parent .env
+.env
