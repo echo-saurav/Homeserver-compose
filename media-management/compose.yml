@@ -1,0 +1,52 @@
+services:
+  nginx:
+    image: nginx
+    container_name: config-nginx
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    volumes:
+      - ./data/nginx/html:/usr/share/nginx/html
+      - ./data/nginx/nginx.conf:/etc/nginx/conf.d/default.conf  
+    ports:
+      - 2364:80
+
+
+  media-filebrowser:
+    image: filebrowser/filebrowser
+    restart: unless-stopped
+    container_name: filebrowser-public-media
+    networks:
+      - traefik-net
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    ports:
+      - 6967:80
+    volumes:
+      - ./data/nginx/html:/srv/nginx
+      - ./data/filebrowser/database:/database
+      - ./data/filebrowser/config:/config
+      - ~/Public/Media:/srv/Media
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.filebrowser-media.rule=Host(`files.home`)"
+      - "traefik.http.routers.filebrowser-media.entrypoints=websecure"    
+      - 'traefik.http.routers.filebrowser-media.tls=true' 
+      - "traefik.http.services.filebrowser-media.loadbalancer.server.port=80"
+      # http
+      - "traefik.http.routers.filebrowser-media-insecure.rule=Host(`files.home`)"
+      - "traefik.http.routers.filebrowser-media-insecure.entrypoints=web"
+
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
