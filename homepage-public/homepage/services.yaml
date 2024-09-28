@@ -1,0 +1,111 @@
+---
+# For configuration options and examples, please see:
+# https://gethomepage.dev/latest/configs/services
+
+
+- Welcome:
+  - Server uptime:
+      href: https://stats.uptimerobot.com/kysMElVCYN/796588674
+      icon: https://uptimerobot.com/favicon.ico
+      description: Server uptime information to check if server was down
+      widget:
+          type: uptimerobot
+          # fields: ["status", "uptime", "lastDown", "downDuration"]
+          fields: ["status", "uptime", "lastDown"]
+          url: https://api.uptimerobot.com
+          key: {{HOMEPAGE_VAR_UPTIME_ROBOT_API}}
+
+  - Uptime public page:
+      icon: uptime-kuma
+      description: internal uptime dashboard
+      href: 'https://{{HOMEPAGE_VAR_DUCK}}/status/public'
+      # server: my-docker
+      # container: uptimekuma
+      widget:
+          fields: ["down", "uptime", "incident"]
+          type: uptimekuma
+          url: http://uptimekuma:3001
+          slug: public
+
+
+
+- Entertainment:
+  - Jellyfin:
+      href: http://{{HOMEPAGE_VAR_DUCK}}/movie
+      icon: jellyfin
+      description: Watch movie/tv-series!
+      # server: my-docker
+      # container: jellyfin-public
+
+  - Jellyseerr:
+      icon: jellyseerr
+      href: http://{{HOMEPAGE_VAR_DUCK_JELLYSEERR}}
+      description: request movies and media
+      # server: my-docker
+      # container: jellyseerr
+
+  - Navidrame:
+      href: http://{{HOMEPAGE_VAR_DUCK}}/navmusic
+      icon: navidrome
+      description: Listen to music
+      # server: my-docker
+      # container: navidrome
+
+- Files and data:
+  - Immich:
+      href: http://{{HOMEPAGE_VAR_DUCK_IMMICH}}
+      icon: immich
+      description: photos
+      # server: my-docker
+      # container: immich_server
+
+  - Private files:
+      href: https://{{HOMEPAGE_VAR_DUCK}}/private-files/
+      icon: filebrowser
+      description: private files
+      # server: my-docker
+      # container: filebrowser-private
+
+  - Media files:
+      href: https://{{HOMEPAGE_VAR_DUCK}}/media/
+      icon: filebrowser
+      description: public media file on the server
+      # server: my-docker
+      # container: filebrowser-media
+
+
+
+- Utility:
+  - Bookstack:
+      icon: bookstack
+      href: https://{{HOMEPAGE_VAR_DUCK}}/bookstack/
+      description: read information here to know more about this server
+      # server: my-docker
+      # container: bookstack
+
+  - Linkwarden:
+      href: https://{{HOMEPAGE_VAR_DUCK_LINK}}
+      icon: linkwarden
+      description: Save links
+      # server: my-docker
+      # container: linkwarden
+
+  - Public booksmarks:
+      href: https://{{HOMEPAGE_VAR_DUCK_LINK}}/public/collections/5
+      icon: linkwarden
+      description: some public links for new users
+
+  - Webtop:
+      href: https://{{HOMEPAGE_VAR_DUCK}}/webtop
+      icon: arch
+      description: online linux vnc
+      # server: my-docker
+      # container: webtop
+
+  - Homepage:
+      href: http://192.168.0.120:1111
+      icon: google-home
+      description: local private homepage
+      # server: my-docker
+      # container: webtop
+
