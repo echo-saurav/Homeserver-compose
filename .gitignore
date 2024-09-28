@@ -1,3 +1,10 @@
-.env
-*/data
 
+# Ignore .env only in the parent directory
+/.env
+
+# Allow .env files in subdirectories
+!*/.env
+
+
+# Ignore all docker data dir
+*/data
