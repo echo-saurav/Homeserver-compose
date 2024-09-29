@@ -1,0 +1,52 @@
+---
+services:
+  jellystat:
+    image: cyfershepard/jellystat:latest
+    container_name: jellystat
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypassword
+      POSTGRES_IP: jellystat-db
+      POSTGRES_PORT: 5432
+      JWT_SECRET: "my-secret-jwt-key"
+      TZ: ${TZ}
+    volumes:
+      - ./data/jellystat-backup-data:/app/backend/backup-data
+    ports:
+      - "3044:3000"
+    depends_on:
+      - jellystat-db
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.jellystat.rule=host(`jellystat.home`)"
+      - "traefik.http.routers.jellystat.entrypoints=websecure"
+      - "traefik.http.routers.jellystat.tls=true"
+      - "traefik.http.services.jellystat.loadbalancer.server.port=3000"
+      # http
+      - "traefik.http.routers.jellystat-insecure.rule=host(`jellystat.home`)"
+      - "traefik.http.routers.jellystat-insecure.entrypoints=web"
+
+
+  jellystat-db:
+    image: postgres:15.2
+    container_name: jellystat-db
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mypassword
+    volumes:
+      - ./data/postgres-data:/var/lib/postgresql/data
+
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
+
