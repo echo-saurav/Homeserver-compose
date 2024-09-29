@@ -1,0 +1,38 @@
+---
+services:
+  searxng:
+    container_name: searxng
+    image: searxng/searxng
+    networks:
+      - traefik-net
+    ports:
+      - "4542:8080"
+    volumes:
+      - ./data/searxng:/etc/searxng
+      # - ./searxng:/etc/searxng:rw
+    environment:
+      - SEARXNG_BASE_URL=https://search.home
+    cap_drop:
+      - ALL
+    cap_add:
+      - CHOWN
+      - SETGID
+      - SETUID
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.searxng.rule=Host(`search.home`)"      
+      - "traefik.http.routers.searxng.entrypoints=websecure"      
+      - 'traefik.http.routers.searxng.tls=true'      
+      - "traefik.http.services.searxng.loadbalancer.server.port=8080"
+      # http
+      - "traefik.http.routers.searxng-insecure.rule=Host(`search.home`)"
+      - "traefik.http.routers.searxng-insecure.entrypoints=web"
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
+
+
