@@ -1,0 +1,290 @@
+---
+services:
+  radarr:
+    container_name: radarr
+    image: lscr.io/linuxserver/radarr:latest
+    networks:
+      - traefik-net
+    volumes:
+      - ~/Public/Media/Downloads:/downloads
+      - ~/Public/Media/Movies:/movies
+      - ./data/radarr:/config
+    ports:
+      - 8082:7878
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.radarr.rule=Host(`radarr.home`)"      
+      - "traefik.http.routers.radarr.entrypoints=websecure"      
+      - 'traefik.http.routers.radarr.tls=true'      
+      - "traefik.http.services.radarr.loadbalancer.server.port=7878"
+      # http
+      - "traefik.http.routers.radarr-insecure.rule=Host(`radarr.home`)"
+      - "traefik.http.routers.radarr-insecure.entrypoints=web"
+
+
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    networks:
+      - traefik-net
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    volumes: 
+      - ~/Public/Media/TVShows:/tv 
+      - ~/Public/Media/Downloads:/downloads 
+      - ./data/sonarr:/config
+    ports:
+      - 8092:8989
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.home`)"      
+      - "traefik.http.routers.sonarr.entrypoints=websecure"      
+      - 'traefik.http.routers.sonarr.tls=true'      
+      - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
+      # http
+      - "traefik.http.routers.sonarr-insecure.rule=Host(`sonarr.home`)"
+      - "traefik.http.routers.sonarr-insecure.entrypoints=web"
+
+
+
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    networks:
+      - traefik-net
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    volumes:
+      - ./data/bazarr/config:/config
+      - ~/Public/Media/Movies:/movies 
+      - ~/Public/Media/TVShows:/tv 
+    ports:
+      - 6767:6767
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.home`)"      
+      - "traefik.http.routers.bazarr.entrypoints=websecure"      
+      - 'traefik.http.routers.bazarr.tls=true'      
+      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+      # http
+      - "traefik.http.routers.bazarr-insecure.rule=Host(`bazarr.home`)"
+      - "traefik.http.routers.bazarr-insecure.entrypoints=web"
+
+
+  whisperasr:
+    image: onerahmet/openai-whisper-asr-webservice:latest
+    container_name: whisperasr
+    volumes:
+      - ./data/whisperasr/data:/data/whisper
+      - ./data/whisperasr/cache:/root/.cache/whisper
+    environment:
+      - ASR_MODEL_PATH=/data/whisper
+      - ASR_MODEL=small
+      - ASR_ENGINE=faster_whisper
+    ports:
+      - 9001:9000
+    networks:
+      - traefik-net
+    restart: unless-stopped
+
+
+
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    networks:
+      - traefik-net
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    volumes:
+      - ./data/prowlarr:/config
+    ports:
+      - 9697:9696
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.prowlarr.rule=host(`prowlarr.home`)"      
+      - "traefik.http.routers.prowlarr.entrypoints=websecure"      
+      - 'traefik.http.routers.prowlarr.tls=true' 
+      - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
+      # http
+      - "traefik.http.routers.prowlarr-insecure.rule=host(`prowlarr.home`)"
+      - "traefik.http.routers.prowlarr-insecure.entrypoints=web"
+
+
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    networks:
+      - traefik-net
+    environment:
+      - LOG_LEVEL=${LOG_LEVEL:-info}
+      - LOG_HTML=${LOG_HTML:-false}
+      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - TZ=${TZ}
+    ports:
+      - "${PORT:-8192}:8191"
+    restart: unless-stopped         
+
+
+  transmission:
+    image: lscr.io/linuxserver/transmission:latest
+    container_name: transmission
+    networks:
+      - traefik-net
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+      - TRANSMISSION_WEB_HOME=/transmissionic/ #optional
+      - USER=${USER}
+      - PASS=${PASS}
+      - WHITELIST= 
+      - PEERPORT= 
+      - HOST_WHITELIST= 
+    volumes:
+      - ~/Public/Media/Downloads:/downloads
+      - ./data/transmissionic-webui-v1.8.0/:/transmissionic/
+      - ./data/transmission/:/config
+    ports:
+      - 9093:9091
+      # - 51413:51413
+      # - 51413:51413/udp
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.transmission.rule=host(`transmission.home`)"      
+      - "traefik.http.routers.transmission.entrypoints=websecure"      
+      - 'traefik.http.routers.transmission.tls=true'      
+      - "traefik.http.services.transmission.loadbalancer.server.port=9091"
+      # http
+      - "traefik.http.routers.transmission-insecure.rule=host(`transmission.home`)"
+      - "traefik.http.routers.transmission-insecure.entrypoints=web"
+
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    networks:
+      - traefik-net
+    environment:
+      - LOG_LEVEL=debug
+      - TZ=${TZ}
+    ports:
+      - 5056:5055
+    volumes:
+      - ./data/jellyseerr:/app/config
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      # adguard domain
+      # https
+      - "traefik.http.routers.jellyseerr-local.rule=Host(`request.home`)"
+      - "traefik.http.routers.jellyseerr-local.entrypoints=websecure"
+      - "traefik.http.routers.jellyseerr-local.tls=true"
+      # http
+      - "traefik.http.routers.jellyseerr-local-insecure.rule=Host(`request.home`)"
+      - "traefik.http.routers.jellyseerr-local-insecure.entrypoints=web"
+      # duck dns
+      # https
+      - traefik.http.routers.jellyseerr.rule=Host(`${DUCK_BASE_JELLYSEERR}`)
+      - traefik.http.routers.jellyseerr.entrypoints=websecure
+      - traefik.http.routers.jellyseerr.tls=true
+      # duck dns ssl
+      - traefik.http.routers.jellyseerr.tls.certresolver=myresolver
+      # service
+      - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
+      # http
+      - traefik.http.routers.jellyseerr-insecure.rule=Host(`${DUCK_BASE_JELLYSEERR}`)
+      - traefik.http.routers.jellyseerr-insecure.entrypoints=web
+
+
+  fileflows:
+    image: revenz/fileflows
+    container_name: fileflows
+    restart: unless-stopped
+    # restart: always
+    ports:
+      - 19200:5000
+    networks:
+      - traefik-net
+    devices:
+      - /dev/dri:/dev/dri
+      # - /dev/dri/renderD128:/dev/dri/renderD128
+      # - /dev/dri/card0:/dev/dri/card0    
+    environment:
+      - TempPathHost=/tmp
+      - TZ=${TZ}
+    volumes:
+      - ~/Public/Media/:/media
+      - ./data/fileflows/data:/app/Data
+      - ./data/fileflows/log:/app/Logs
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /tmp/fileflows:/temp
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.fileflows.rule=host(`flow.home`)"      
+      - "traefik.http.routers.fileflows.entrypoints=websecure"      
+      - 'traefik.http.routers.fileflows.tls=true'      
+      - "traefik.http.services.fileflows.loadbalancer.server.port=5000"
+      # http
+      - "traefik.http.routers.fileflows-insecure.rule=host(`flow.home`)"
+      - "traefik.http.routers.fileflows-insecure.entrypoints=web"
+
+
+  filebrowser:
+    image: filebrowser/filebrowser
+    restart: unless-stopped
+    container_name: filebrowser-media
+    networks:
+      - traefik-net
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    ports:
+      - 6968:80
+    volumes:
+      - ~/Public:/srv/
+      - ./data/filebrowser/database.db:/database.db
+      - ./data/filebrowser/filebrowser.json:/.filebrowser.json
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.media-filebrowser.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/media`)"
+      - "traefik.http.routers.media-filebrowser.entrypoints=web"
+      # - "traefik.http.services.media-filebrowser.loadbalancer.server.port=80"      
+      # https
+      - "traefik.http.routers.media-filebrowser-secure.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/media`)"
+      - "traefik.http.routers.media-filebrowser-secure.entrypoints=websecure"
+      # - "traefik.http.services.media-filebrowser-secure.loadbalancer.server.port=80"      
+      - 'traefik.http.routers.media-filebrowser-secure.tls=true'      
+
+
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
+
