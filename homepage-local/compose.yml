@@ -1,0 +1,63 @@
+
+services:
+  homepage-local:
+    image: ghcr.io/gethomepage/homepage:latest
+    container_name: homepage-local
+    networks:
+      - traefik-net
+    restart: unless-stopped    
+    # depends_on:
+    #   - dockerproxy-homepage-local
+    ports:
+      - 2222:3000
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+      # homepage env vars
+      - HOMEPAGE_VAR_JELLY=${HOMEPAGE_VAR_JELLY}
+      - HOMEPAGE_VAR_NAVI=${HOMEPAGE_VAR_NAVI}
+      - HOMEPAGE_VAR_WATCH=${HOMEPAGE_VAR_WATCH}
+      - HOMEPAGE_VAR_UPTIME_ROBOT_API=${UPTIME_ROBOT_API}
+      - HOMEPAGE_VAR_RADARR=${RADARR_API}
+      - HOMEPAGE_VAR_SONARR=${SONARR_API}
+      - HOMEPAGE_VAR_PROWLARR=${PROWLARR_API}
+      - HOMEPAGE_VAR_JELLYSEERR=${JELLYSEERR_API}
+      - HOMEPAGE_VAR_IMMICH=${IMMICH_API}
+      - HOMEPAGE_VAR_TAILSCALE_IP=${TAILSCALE_IP}
+    volumes:
+      - ./data/homepage:/app/config 
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.hm.rule=Host(`home.home`)"      
+      - "traefik.http.routers.hm.entrypoints=websecure"      
+      - 'traefik.http.routers.hm.tls=true'      
+      - "traefik.http.services.hm.loadbalancer.server.port=3000"
+      # http
+      - "traefik.http.routers.hm-insecure.rule=Host(`home.home`)"
+      - "traefik.http.routers.hm-insecure.entrypoints=web"
+
+
+  # dockerproxy-homepage-local:
+  #   image: ghcr.io/tecnativa/docker-socket-proxy:latest
+  #   container_name: dockerproxy-homepage-local
+  #   networks:
+  #     - traefik-net
+  #   environment:
+  #   - CONTAINERS=1 # Allow access to viewing containers
+  #   - SERVICES=1 # Allow access to viewing services (necessary when using Docker Swarm)
+  #   - TASKS=1 # Allow access to viewing tasks (necessary when using Docker Swarm)
+  #   - POST=0 # Disallow any POST operations (effectively read-only)
+  #   ports:
+  #   - 127.0.0.1:2377:2375
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+  #   restart: unless-stopped
+
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
