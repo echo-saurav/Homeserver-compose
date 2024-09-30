@@ -57,24 +57,6 @@ endpoints:
     alerts:
       - type: discord
 
-  - name: jellyLocal
-    url: "${GATUS_JELLY_LOCAL}"
-    group: Internal
-    interval: 60s
-    conditions:
-      - "[STATUS] == 200"
-    alerts:
-      - type: discord
-
-  - name: jellyLocal2
-    url: "${GATUS_JELLY_LOCAL2}"
-    group: Internal
-    interval: 60s
-    conditions:
-      - "[STATUS] == 200"
-    alerts:
-      - type: discord
-
   # External sites
   - name: google
     url: https://google.com
