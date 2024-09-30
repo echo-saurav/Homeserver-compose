@@ -57,8 +57,17 @@ endpoints:
     alerts:
       - type: discord
 
-  - name: n8n
-    url: "${GATUS_N8N}"
+  - name: jellyLocal
+    url: "${GATUS_JELLY_LOCAL}"
+    group: Internal
+    interval: 60s
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: discord
+
+  - name: jellyLocal2
+    url: "${GATUS_JELLY_LOCAL2}"
     group: Internal
     interval: 60s
     conditions:
