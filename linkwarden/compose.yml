@@ -1,0 +1,70 @@
+---
+services:
+  linkwarden:
+    image: ghcr.io/linkwarden/linkwarden:latest 
+    container_name: linkwarden
+    # env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://postgres:${LINK_POSTGRES_PASSWORD}@postgres:5432/postgres
+      - NEXTAUTH_URL=${LINK_NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${LINK_NEXTAUTH_SECRET}
+      - POSTGRES_PASSWORD=${LINK_POSTGRES_PASSWORD}
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    ports:
+      - 3555:3000
+    volumes:
+      - ./data/linkwarden:/data/data
+    depends_on:
+      postgres:
+        condition: service_healthy
+    labels:
+      - "traefik.enable=true"  
+      # adguard domain
+      # https
+      - "traefik.http.routers.link-local.rule=Host(`links.home`)"
+      - "traefik.http.routers.link-local.entrypoints=websecure"
+      - "traefik.http.routers.link-local.tls=true"
+      # http
+      - "traefik.http.routers.link-local-insecure.rule=Host(`links.home`)"
+      - "traefik.http.routers.link-local-insecure.entrypoints=web"
+      # duck dns
+      # https
+      - "traefik.http.routers.linkwarden.rule=Host(`${DUCK_LINKWARDEN}`)"      
+      - "traefik.http.routers.linkwarden.entrypoints=websecure"      
+      - 'traefik.http.routers.linkwarden.tls=true'
+      - "traefik.http.services.linkwarden.loadbalancer.server.port=3000"
+      # duck dns ssl
+      - "traefik.http.routers.linkwarden.tls.certresolver=myresolver"
+      # http
+      - "traefik.http.routers.linkwarden-insecure.rule=Host(`${DUCK_LINKWARDEN}`)"
+      - "traefik.http.routers.linkwarden-insecure.entrypoints=web"
+
+  postgres:
+    image: postgres:16-alpine
+    container_name: postgres-linkwarden
+    environment:
+      - NEXTAUTH_URL=${LINK_NEXTAUTH_URL}
+      - NEXTAUTH_SECRET=${LINK_NEXTAUTH_SECRET}
+      - POSTGRES_PASSWORD=${LINK_POSTGRES_PASSWORD}
+      - TZ=${TZ}
+    networks:
+      - traefik-net
+    # env_file: .env
+    restart: unless-stopped
+    volumes:
+      - ./data/pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
+      interval: 30s
+      timeout: 60s
+      retries: 5
+      start_period: 80s 
+
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
