@@ -57,6 +57,16 @@ endpoints:
     alerts:
       - type: discord
 
+  - name: Quran API
+    url: "${GATUS_QURAN_API}"
+    group: Internal
+    interval: 60s
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: discord
+
+
   # External sites
   - name: google
     url: https://google.com

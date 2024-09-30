@@ -24,6 +24,8 @@ services:
       - GATUS_NEXTCLOUD=${GATUS_NEXTCLOUD}
       - GATUS_IMMICH=${GATUS_IMMICH}
       - GATUS_N8N=${GATUS_N8N}
+      # DEV
+      - GATUS_QURAN_API=${GATUS_QURAN_API}
     labels:
       - "traefik.enable=true" 
       # https
