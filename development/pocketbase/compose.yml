@@ -1,0 +1,19 @@
+---
+services:
+  pocketbase:
+    container_name: pocketbase-chat 
+    restart: unless-stopped
+    build: .
+    ports:
+      - "8001:8080"
+    volumes:
+      - ./data/pocketbase-data:/pb/pb_data
+    # networks:
+    #   - public-net
+
+# networks:
+#   public-net:
+#     external: true
+#     name: public-net
+
+
