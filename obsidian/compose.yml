@@ -2,7 +2,7 @@
 services:
   syncthing:
     image: lscr.io/linuxserver/syncthing:latest
-    container_name: syncthing-syncthing
+    container_name: syncthing-obsidian
     hostname: syncthing 
     networks:
       - traefik-net
