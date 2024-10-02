@@ -10,10 +10,12 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
-      - ~/storage/private/photos/:/mnt/media/private-photos:ro
-      - ~/storage/private/macbook/:/mnt/media/macbook:ro
-      - ~/storage/private/obsidian/ObsidianNotes/media:/mnt/media/obsidian:ro
-      - ~/storage/private/youtube-dl:/mnt/media/youtube-dl:ro
+      # macbook downloads
+      # path bind with syncthing 
+      - ~/Private/MacbookDownloads:/mnt/media/macbook-downloads
+      - ~/Private/Pictures/OldPhotos:/mnt/media/old-photos
+      - ~/Private/Pictures/Other/:/mnt/media/other-photos
+      - ~/Public/Pictures/Wallpapers:/mnt/media/wallpapers
     env_file:
       - .env
     depends_on:
@@ -29,6 +31,7 @@ services:
       - "traefik.http.routers.immich-local.rule=Host(`photos.home`)"
       - "traefik.http.routers.immich-local.entrypoints=websecure"
       - "traefik.http.routers.immich-local.tls=true"
+      # duck dns
       # insecure
       - "traefik.http.routers.immich-local-insecure.rule=Host(`photos.home`)"
       - "traefik.http.routers.immich-local-insecure.entrypoints=web"
