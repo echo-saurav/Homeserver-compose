@@ -1,35 +1,32 @@
-
+---
 services:
   web:
-    image: ghcr.io/hoarder-app/hoarder-web:${HOARDER_VERSION:-release}
-    container_name: hoarder-web
+    image: ghcr.io/hoarder-app/hoarder:${HOARDER_VERSION:-release}
+    container_name: hoarder-app
     restart: unless-stopped
     networks:
       - traefik-net
+    volumes:
+      - ./data/data:/data
+    ports:
+      - 3020:3000
     depends_on:
       - chrome
       - meilisearch
-    volumes:
-      - ./data/hoarder-app:/data
-    ports:
-      - 3449:3000
     # env_file:
     #   - .env
     environment:
       MEILI_ADDR: http://meilisearch:7700
+      BROWSER_WEB_URL: http://chrome:9222
       DATA_DIR: /data
-      # env
-      HOARDER_VERSION: ${HOARDER_VERSION}
+      NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
       NEXTAUTH_SECRET: ${HOARDER_NEXTAUTH_SECRET}
       MEILI_MASTER_KEY: ${HOARDER_MEILI_MASTER_KEY}
-      NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
-      # crawler
-      CRAWLER_FULL_PAGE_SCREENSHOT: ${CRAWLER_FULL_PAGE_SCREENSHOT}
-      CRAWLER_NAVIGATE_TIMEOUT_SEC: ${CRAWLER_NAVIGATE_TIMEOUT_SEC}
-      CRAWLER_JOB_TIMEOUT_SEC: ${CRAWLER_JOB_TIMEOUT_SEC}
-      MAX_ASSET_SIZE_MB: ${MAX_ASSET_SIZE_MB}
-      # ollama
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL} 
+      CRAWLER_FULL_PAGE_SCREENSHOT: ${HOARDER_CRAWLER_FULL_PAGE_SCREENSHOT}
+      CRAWLER_NAVIGATE_TIMEOUT_SEC: ${HOARDER_CRAWLER_NAVIGATE_TIMEOUT_SEC}
+      CRAWLER_JOB_TIMEOUT_SEC: ${HOARDER_CRAWLER_JOB_TIMEOUT_SEC}
+      MAX_ASSET_SIZE_MB: ${HOARDER_MAX_ASSET_SIZE_MB}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
       INFERENCE_TEXT_MODEL: ${INFERENCE_TEXT_MODEL}
     labels:
       - "traefik.enable=true"  
@@ -45,8 +42,8 @@ services:
 
   chrome:
     image: gcr.io/zenika-hub/alpine-chrome:123
+    container_name: hoarder-app-chrome
     restart: unless-stopped
-    container_name: hoarder-chrome
     networks:
       - traefik-net
     command:
@@ -57,44 +54,42 @@ services:
       - --remote-debugging-port=9222
       - --hide-scrollbars
     environment:
-      # env
-      HOARDER_VERSION: ${HOARDER_VERSION}
+      MEILI_ADDR: http://meilisearch:7700
+      BROWSER_WEB_URL: http://chrome:9222
+      DATA_DIR: /data
+      NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
       NEXTAUTH_SECRET: ${HOARDER_NEXTAUTH_SECRET}
       MEILI_MASTER_KEY: ${HOARDER_MEILI_MASTER_KEY}
-      NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
-      # crawler
-      CRAWLER_FULL_PAGE_SCREENSHOT: ${CRAWLER_FULL_PAGE_SCREENSHOT}
-      CRAWLER_NAVIGATE_TIMEOUT_SEC: ${CRAWLER_NAVIGATE_TIMEOUT_SEC}
-      CRAWLER_JOB_TIMEOUT_SEC: ${CRAWLER_JOB_TIMEOUT_SEC}
-      MAX_ASSET_SIZE_MB: ${MAX_ASSET_SIZE_MB}
-      # ollama
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL} 
+      CRAWLER_FULL_PAGE_SCREENSHOT: ${HOARDER_CRAWLER_FULL_PAGE_SCREENSHOT}
+      CRAWLER_NAVIGATE_TIMEOUT_SEC: ${HOARDER_CRAWLER_NAVIGATE_TIMEOUT_SEC}
+      CRAWLER_JOB_TIMEOUT_SEC: ${HOARDER_CRAWLER_JOB_TIMEOUT_SEC}
+      MAX_ASSET_SIZE_MB: ${HOARDER_MAX_ASSET_SIZE_MB}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
       INFERENCE_TEXT_MODEL: ${INFERENCE_TEXT_MODEL}
 
   meilisearch:
     image: getmeili/meilisearch:v1.6
-    container_name: hoarder-meili
-    restart: unless-stopped
+    container_name: hoarder-app-meilisearch
     networks:
       - traefik-net
-    volumes:
-      - ./data/meilisearch/:/meili_data
+    restart: unless-stopped
     # env_file:
     #   - .env
+    volumes:
+      - ./data/meilisearch:/meili_data
     environment:
       MEILI_NO_ANALYTICS: "true"
-      # env
-      HOARDER_VERSION: ${HOARDER_VERSION}
+      MEILI_ADDR: http://meilisearch:7700
+      BROWSER_WEB_URL: http://chrome:9222
+      DATA_DIR: /data
+      NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
       NEXTAUTH_SECRET: ${HOARDER_NEXTAUTH_SECRET}
       MEILI_MASTER_KEY: ${HOARDER_MEILI_MASTER_KEY}
-      NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
-      # crawler
-      CRAWLER_FULL_PAGE_SCREENSHOT: ${CRAWLER_FULL_PAGE_SCREENSHOT}
-      CRAWLER_NAVIGATE_TIMEOUT_SEC: ${CRAWLER_NAVIGATE_TIMEOUT_SEC}
-      CRAWLER_JOB_TIMEOUT_SEC: ${CRAWLER_JOB_TIMEOUT_SEC}
-      MAX_ASSET_SIZE_MB: ${MAX_ASSET_SIZE_MB}
-      # ollama
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL} 
+      CRAWLER_FULL_PAGE_SCREENSHOT: ${HOARDER_CRAWLER_FULL_PAGE_SCREENSHOT}
+      CRAWLER_NAVIGATE_TIMEOUT_SEC: ${HOARDER_CRAWLER_NAVIGATE_TIMEOUT_SEC}
+      CRAWLER_JOB_TIMEOUT_SEC: ${HOARDER_CRAWLER_JOB_TIMEOUT_SEC}
+      MAX_ASSET_SIZE_MB: ${HOARDER_MAX_ASSET_SIZE_MB}
+      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
       INFERENCE_TEXT_MODEL: ${INFERENCE_TEXT_MODEL}
 
 
@@ -103,5 +98,4 @@ networks:
   traefik-net:
     external: true
     name: traefik-net
-
 
