@@ -1,0 +1,77 @@
+---
+services: 
+  filebrowser-media:
+    image: filebrowser/filebrowser
+    restart: unless-stopped
+    container_name: filebrowser-media
+    networks:
+      - traefik-net
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    ports:
+      - 6967:80
+    volumes:
+      - ~/Public/Media:/srv/Media
+      - ./data/filebrowser-media/database.db:/database.db
+      - ./data/filebrowser-media/filebrowser.json:/.filebrowser.json
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.fs-media.rule=Host(`files.home`)"
+      - "traefik.http.routers.fs-media.entrypoints=websecure"    
+      - 'traefik.http.routers.fs-media.tls=true' 
+      - "traefik.http.services.fs-media.loadbalancer.server.port=80"
+      # http
+      - "traefik.http.routers.fs-media-insecure.rule=Host(`files.home`)"
+      - "traefik.http.routers.fs-media-insecure.entrypoints=web"
+
+    # not exposing anything to the public internet 
+    # i need to think if i want to expose
+    # labels:
+    #   - "traefik.enable=true"
+    #   - "traefik.http.routers.media-filebrowser.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/media`)"
+    #   - "traefik.http.routers.media-filebrowser.entrypoints=web"
+    #   # - "traefik.http.services.media-filebrowser.loadbalancer.server.port=80"      
+    #   # https
+    #   - "traefik.http.routers.media-filebrowser-secure.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/media`)"
+    #   - "traefik.http.routers.media-filebrowser-secure.entrypoints=websecure"
+    #   # - "traefik.http.services.media-filebrowser-secure.loadbalancer.server.port=80"      
+    #   - 'traefik.http.routers.media-filebrowser-secure.tls=true'      
+
+
+  filebrowser-private:
+    image: filebrowser/filebrowser
+    restart: unless-stopped
+    container_name: filebrowser-private
+    networks:
+      - traefik-net
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    ports:
+      - 6968:80
+    volumes:
+      - ~/Private:/srv/
+      - ./data/filebrowser-private/database.db:/database.db
+      - ./data/filebrowser-private/filebrowser.json:/.filebrowser.json
+
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.fs-private.rule=Host(`private.home`)"
+      - "traefik.http.routers.fs-private.entrypoints=websecure"  
+      - 'traefik.http.routers.fs-private.tls=true' 
+      - "traefik.http.services.fs-private.loadbalancer.server.port=80"
+      # http
+      - "traefik.http.routers.fs-private-insecure.rule=Host(`private.home`)"
+      - "traefik.http.routers.fs-private-insecure.entrypoints=web"
+
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
