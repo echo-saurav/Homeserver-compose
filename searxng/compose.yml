@@ -3,6 +3,7 @@ services:
   searxng:
     container_name: searxng
     image: searxng/searxng
+    restart: unless-stopped
     networks:
       - traefik-net
     ports:
