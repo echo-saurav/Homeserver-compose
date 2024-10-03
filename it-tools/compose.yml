@@ -1,0 +1,25 @@
+---
+services:
+  it-tools:
+    image: corentinth/it-tools:latest
+    container_name: it-tools
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    ports:
+      - 4892:80
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.it-tools.rule=Host(`tools.home`)"      
+      - "traefik.http.routers.it-tools.entrypoints=websecure"      
+      - 'traefik.http.routers.it-tools.tls=true'      
+      - "traefik.http.services.it-tools.loadbalancer.server.port=80"
+      # http
+      - "traefik.http.routers.it-tools-insecure.rule=Host(`tools.home`)"
+      - "traefik.http.routers.it-tools-insecure.entrypoints=web"
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
