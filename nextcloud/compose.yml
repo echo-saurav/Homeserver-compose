@@ -76,6 +76,30 @@ services:
       start_period: 80s 
 
 
+  nextcloud-whiteboard-server:
+    image: ghcr.io/nextcloud-releases/whiteboard:release
+    restart: unless-stopped
+    container_name: whiteboard-next
+    networks:
+      - traefik-net
+    ports:
+      - 3102:3002
+    environment:
+      - NEXTCLOUD_URL=https://${DUCK_NEXT}
+      - JWT_SECRET_KEY=JMeGZFicJlZJWPmw4jL8
+    labels:
+      - "traefik.enable=true"  
+      # duck dns
+      # https
+      - "traefik.http.routers.whiteboard.rule=Host(`${DUCK_NEXT}`) && PathPrefix(`/whiteboard`)"
+      - "traefik.http.routers.whiteboard.entrypoints=websecure"
+      - 'traefik.http.routers.whiteboard.tls=true' 
+      - "traefik.http.services.whiteboard.loadbalancer.server.port=3002" 
+      # middlewares
+      - "traefik.http.middlewares.whiteboard-strip.stripprefix.prefixes=/whiteboard"
+      - "traefik.http.routers.whiteboard.middlewares=whiteboard-strip"
+
+
 
 networks:
   traefik-net:
