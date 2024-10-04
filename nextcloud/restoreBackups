@@ -1,0 +1,28 @@
+#!/bin/bash
+
+
+# nextcloud restore
+backup_dir=~/backups/tars/nextcloud
+postgres_container=postgres-nextcloud2
+
+# create dirs
+mkdir -p ./data/nextcloud-config
+mkdir -p ./data/nextcloud-data
+mkdir -p ./data/postgres-nextcloud
+
+# # extract both dir
+tar -xvjf $backup_dir/nextcloud-data.tar.bz2 -C ./data/nextcloud-data
+tar -xvjf $backup_dir/nextcloud-config.tar.bz2 -C ./data/nextcloud-config
+bzip2 -dc $backup_dir/postgres-nextcloud.sql.bz2 > ./postgres-nextcloud.sql
+
+
+# restore database
+# start postgres database before restoring
+cat ./postgres-nextcloud.sql | docker exec -i $postgres_container psql -U postgres
+# make sure to go to nextcloud config and change postgres host if you have new host after restore
+# also chanege the trusted port and domain if you need 
+
+
+
+
+

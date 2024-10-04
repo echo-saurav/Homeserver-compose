@@ -1,0 +1,20 @@
+#!/bin/bash
+
+backup_dir=~/backups/tars/obsidian
+
+# create dir if not yet created
+mkdir -p $backup_dir
+
+obsidianLearning=/home/saurav/docker/compose/obsidian/data/obsidianVaults/Learning/
+
+# create data dir backup
+tar --directory=$obsidianLearning -cvjSf $backup_dir/Learning.tar.bz2 .
+
+# # copy to google drive
+rclone copy $backup_dir NextcloudDrive:/backups/obsidianVaults
+
+
+
+
+
+

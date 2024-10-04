@@ -1,0 +1,24 @@
+#!/bin/bash
+
+backup_dir=~/backups/tars/hoarder
+
+# create dir if not yet created
+mkdir -p $backup_dir
+
+hoarder_data_dir=/home/saurav/docker/compose/hoarder/data/data
+#
+# Get the current date in the format YYYYMMDD
+# current_date=$(date +%Y-%m-%d)
+
+# create data dir backup
+tar --directory=$hoarder_data_dir -cvjSf $backup_dir/hoarder-data.tar.bz2 .
+# tar --directory=$hoarder_data_dir -cvjSf $backup_dir/hoarder-data"$current_date".tar.bz2 .
+
+# copy to google drive
+rclone copy $backup_dir NextcloudDrive:/backups/hoarder
+
+
+
+
+
+

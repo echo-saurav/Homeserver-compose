@@ -1,0 +1,27 @@
+#!/bin/bash
+
+backup_dir=~/backups/tars/nextcloud
+
+# create dir if not yet created
+mkdir -p $backup_dir
+
+# create database backup
+# docker exec -t postgres-nextcloud pg_dumpall -c -U postgres | bzip2 --best > dump_`date +%Y-%m-%d"_"%H_%M_%S`.sql.bz2
+docker exec -t postgres-nextcloud pg_dumpall -c -U postgres | bzip2 --best > $backup_dir/postgres-nextcloud.sql.bz2
+
+
+nextcloudData=/home/saurav/docker/compose/nextcloud/data/nextcloud-data/
+nextcloudConfig=/home/saurav/docker/compose/nextcloud/data/nextcloud-config
+
+# create data dir backup
+tar --directory=$nextcloudData -cvjSf $backup_dir/nextcloud-data.tar.bz2 .
+tar --directory=$nextcloudConfig -cvjSf $backup_dir/nextcloud-config.tar.bz2 .
+
+# copy to google drive
+rclone copy $backup_dir NextcloudDrive:/backups/nextcloud/
+
+
+
+
+
+
