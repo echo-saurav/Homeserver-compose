@@ -68,19 +68,6 @@ services:
       - ./data/config-learning.js:/app/config.js
       
 
-  anysocket:
-    image: lynxaegon/obsidian-anysocket-sync-server
-    container_name: anysocket-test
-    restart: always
-    networks:
-      - traefik-net
-    ports:
-      - 4390:3000
-    volumes:
-      - ./data/anysocket-data:/app/data
-      - ./data/config.js:/app/config.js
-      
-
 
 networks:
   traefik-net:
