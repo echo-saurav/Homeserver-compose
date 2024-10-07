@@ -6,6 +6,7 @@ services:
     container_name: nextcloud
     depends_on:
       - postgres
+      - nextcloud-whiteboard-server
     environment:
       - PUID=${UID}
       - PGID=${GID}

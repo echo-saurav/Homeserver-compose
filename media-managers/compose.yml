@@ -3,6 +3,10 @@ services:
   radarr:
     container_name: radarr
     image: lscr.io/linuxserver/radarr:latest
+    depends_on:
+      - flaresolverr
+      - transmission
+      - prowlarr
     networks:
       - traefik-net
     volumes:
@@ -61,6 +65,8 @@ services:
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
     container_name: bazarr
+    depends_on:
+      - whisperasr
     networks:
       - traefik-net
     environment:
@@ -107,6 +113,9 @@ services:
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
+    depends_on:
+      - transmission
+      - flaresolverr
     networks:
       - traefik-net
     environment:
@@ -185,6 +194,9 @@ services:
   jellyseerr:
     image: fallenbagel/jellyseerr:latest
     container_name: jellyseerr
+    depends_on:
+      - radarr
+      - sonarr
     networks:
       - traefik-net
     environment:
@@ -219,66 +231,39 @@ services:
       - traefik.http.routers.jellyseerr-insecure.entrypoints=web
 
 
-  fileflows:
-    image: revenz/fileflows
-    container_name: fileflows
-    restart: unless-stopped
-    # restart: always
-    ports:
-      - 19200:5000
-    networks:
-      - traefik-net
-    devices:
-      - /dev/dri:/dev/dri
-      # - /dev/dri/renderD128:/dev/dri/renderD128
-      # - /dev/dri/card0:/dev/dri/card0    
-    environment:
-      - TempPathHost=/tmp
-      - TZ=${TZ}
-    volumes:
-      - ~/Public/Media/:/media
-      - ./data/fileflows/data:/app/Data
-      - ./data/fileflows/log:/app/Logs
-      - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /tmp/fileflows:/temp
-    labels:
-      - "traefik.enable=true"  
-      # https
-      - "traefik.http.routers.fileflows.rule=host(`flow.home`)"      
-      - "traefik.http.routers.fileflows.entrypoints=websecure"      
-      - 'traefik.http.routers.fileflows.tls=true'      
-      - "traefik.http.services.fileflows.loadbalancer.server.port=5000"
-      # http
-      - "traefik.http.routers.fileflows-insecure.rule=host(`flow.home`)"
-      - "traefik.http.routers.fileflows-insecure.entrypoints=web"
+  # fileflows:
+  #   image: revenz/fileflows
+  #   container_name: fileflows
+  #   restart: unless-stopped
+  #   # restart: always
+  #   ports:
+  #     - 19200:5000
+  #   networks:
+  #     - traefik-net
+  #   devices:
+  #     - /dev/dri:/dev/dri
+  #     # - /dev/dri/renderD128:/dev/dri/renderD128
+  #     # - /dev/dri/card0:/dev/dri/card0    
+  #   environment:
+  #     - TempPathHost=/tmp
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ~/Public/Media/:/media
+  #     - ./data/fileflows/data:/app/Data
+  #     - ./data/fileflows/log:/app/Logs
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro
+  #     - /tmp/fileflows:/temp
+  #   labels:
+  #     - "traefik.enable=true"  
+  #     # https
+  #     - "traefik.http.routers.fileflows.rule=host(`flow.home`)"      
+  #     - "traefik.http.routers.fileflows.entrypoints=websecure"      
+  #     - 'traefik.http.routers.fileflows.tls=true'      
+  #     - "traefik.http.services.fileflows.loadbalancer.server.port=5000"
+  #     # http
+  #     - "traefik.http.routers.fileflows-insecure.rule=host(`flow.home`)"
+  #     - "traefik.http.routers.fileflows-insecure.entrypoints=web"
 
-
-  filebrowser:
-    image: filebrowser/filebrowser
-    restart: unless-stopped
-    container_name: filebrowser-media
-    networks:
-      - traefik-net
-    environment:
-      - PUID=${UID}
-      - PGID=${GID}
-      - TZ=${TZ}
-    ports:
-      - 6968:80
-    volumes:
-      - ~/Public:/srv/
-      - ./data/filebrowser/database.db:/database.db
-      - ./data/filebrowser/filebrowser.json:/.filebrowser.json
-    labels:
-      - "traefik.enable=true"
-      - "traefik.http.routers.media-filebrowser.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/media`)"
-      - "traefik.http.routers.media-filebrowser.entrypoints=web"
-      # - "traefik.http.services.media-filebrowser.loadbalancer.server.port=80"      
-      # https
-      - "traefik.http.routers.media-filebrowser-secure.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/media`)"
-      - "traefik.http.routers.media-filebrowser-secure.entrypoints=websecure"
-      # - "traefik.http.services.media-filebrowser-secure.loadbalancer.server.port=80"      
-      - 'traefik.http.routers.media-filebrowser-secure.tls=true'      
 
 
 

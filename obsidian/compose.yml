@@ -24,6 +24,9 @@ services:
   obsidian-remote:
     image: lscr.io/linuxserver/obsidian:latest
     container_name: obsidian-remote
+    depends_on:
+      - syncthing
+      - anysocket-learning
     networks:
       - traefik-net
     security_opt:
@@ -59,6 +62,8 @@ services:
     image: lynxaegon/obsidian-anysocket-sync-server
     container_name: anysocket-learning
     restart: always
+    depends_on:
+      - syncthing
     networks:
       - traefik-net
     ports:
