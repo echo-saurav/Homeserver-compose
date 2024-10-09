@@ -10,6 +10,7 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - ${UPLOAD_LOCATION}:/usr/src/app/upload
+      - ./config.json:${IMMICH_CONFIG_FILE}
       # macbook downloads
       # path bind with syncthing 
       - ~/Private/MacbookDownloads:/mnt/media/macbook-downloads
