@@ -50,6 +50,13 @@
       # server: my-docker
       # container: filebrowser-private
 
+  - Kavita:
+      icon: kavita
+      description: read books
+      href: https://saurav-server.duckdns.org/books/
+      # server: my-docker
+      # container: kavita
+
 
 
 - Utility:

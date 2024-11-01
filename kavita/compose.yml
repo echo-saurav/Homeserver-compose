@@ -1,0 +1,39 @@
+---
+services:
+  kavita:
+    image: jvmilazz0/kavita:latest    # Using the stable branch from the official dockerhub repo.
+    container_name: kavita
+    networks:
+      - traefik-net
+    volumes:
+      - ~/Public/Books/:/books
+      - ./data/kavita:/kavita/config
+    environment:
+      - TZ=${TZ}
+    ports:
+      - 5000:5000
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      # https
+      # duck dns
+      - "traefik.http.routers.kavita-duck.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/books`)"
+      - "traefik.http.routers.kavita-duck.entrypoints=websecure"
+      - "traefik.http.routers.kavita-duck.tls=true"
+      # duck dns ssl
+      - "traefik.http.routers.kavita-duck.tls.certresolver=myresolver"
+      # adguard dns
+      - "traefik.http.routers.kavita.rule=host(`books.home.arpa`)"
+      - "traefik.http.routers.kavita.entrypoints=websecure"
+      - 'traefik.http.routers.kavita.tls=true'
+      - "traefik.http.services.kavita.loadbalancer.server.port=5000"
+      # http
+      - "traefik.http.routers.kavita-insecure.rule=host(`books.home.arpa`)"
+      - "traefik.http.routers.kavita-insecure.entrypoints=web"
+
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
