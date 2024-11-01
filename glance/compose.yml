@@ -1,0 +1,64 @@
+---
+services:
+  glance:
+    image: ghcr.io/echo-saurav/glance:latest
+    container_name: glanceapp
+    # pull_policy defines the decisions Compose implementations will make when it starts to pull images. Possible values are:
+    # always: Compose always pulls the image from the registry.
+    # never: Compose doesn't pull the image from a registry and relies on the platform cached image. If there is no cached image, a failure is reported.
+    # missing: Compose pulls the image only if it's not available in the platform cache. (default)
+    # build: Compose builds the image. Compose rebuilds the image if it's already present.
+    #pull_policy: always
+    volumes:
+      - ./data/glance.yml:/app/glance.yml
+      - ./data/assets:/assets
+      # host time setting
+      - /etc/timezone:/etc/timezone:ro
+      - /etc/localtime:/etc/localtime:ro
+    ports:
+      - 6149:8080
+    restart: unless-stopped
+    networks:
+        - traefik-net
+    labels:
+      - "traefik.enable=true"
+      # https
+      - "traefik.http.routers.glanceapp.rule=host(`glanceapp.home.arpa`)"
+      - "traefik.http.routers.glanceapp.entrypoints=websecure"
+      - 'traefik.http.routers.glanceapp.tls=true'
+      - "traefik.http.services.glanceapp.loadbalancer.server.port=8080"
+      # http
+      - "traefik.http.routers.glanceapp-insecure.rule=host(`glanceapp.home.arpa`)"
+      - "traefik.http.routers.glanceapp-insecure.entrypoints=web"
+
+  # ladder:
+  #   image: ghcr.io/everywall/ladder:latest
+  #   container_name: ladder
+  #   #build: .
+  #   #restart: always
+  #   #command: sh -c ./ladder
+  #   environment:
+  #     - PORT=8080
+  #     - RULESET=/app/ruleset.yaml
+  #     #- ALLOWED_DOMAINS=example.com,example.org
+  #     #- ALLOWED_DOMAINS_RULESET=false
+  #     #- EXPOSE_RULESET=true
+  #     #- PREFORK=false
+  #     #- DISABLE_FORM=false
+  #     #- FORM_PATH=/app/form.html
+  #     #- X_FORWARDED_FOR=66.249.66.1
+  #     #- USER_AGENT=Mozilla/5.0 (compatible; Googlebot/2.1; +http://www.google.com/bot.html)
+  #     #- USERPASS=foo:bar
+  #     #- LOG_URLS=true
+  #     #- GODEBUG=netdns=go
+  #   ports:
+  #     - "5050:8080"
+  #   volumes:
+  #     - ./data/ladder/ruleset.yaml:/app/ruleset.yaml
+  #     #- ./data/ladder/handlers/form.html:/app/form.html
+  #
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
