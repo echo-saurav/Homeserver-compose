@@ -1,0 +1,61 @@
+---
+services:
+  nomie6:
+    image: ghcr.io/echo-saurav/nomie6-oss:latest
+    container_name: nomie6
+    restart: always
+    # pull_policy defines the decisions Compose implementations will make when it starts to pull images. Possible values are:
+    # always: Compose always pulls the image from the registry.
+    # never: Compose doesn't pull the image from a registry and relies on the platform cached image. If there is no cached image, a failure is reported.
+    # missing: Compose pulls the image only if it's not available in the platform cache. (default)
+    # build: Compose builds the image. Compose rebuilds the image if it's already present.
+    pull_policy: always
+    depends_on:
+      - couchdb
+    networks:
+      - traefik-net 
+    ports:
+      - 2321:80
+    labels:
+      - "traefik.enable=true"
+      # https
+      - "traefik.http.routers.nomie.rule=host(`nomie.home.arpa`)"
+      - "traefik.http.routers.nomie.entrypoints=websecure"
+      - 'traefik.http.routers.nomie.tls=true'
+      - "traefik.http.services.nomie.loadbalancer.server.port=80"
+      # http
+      - "traefik.http.routers.nomie-insecure.rule=host(`nomie.home.arpa`)"
+      - "traefik.http.routers.nomie-insecure.entrypoints=web"
+
+
+  couchdb:
+    image: apache/couchdb:3.3.2
+    container_name: couchdb
+    networks:
+      - traefik-net
+    ports:
+      - 5984:5984
+    volumes:
+      - ./data/couchdb/:/opt/couchdb/data
+      - ./couchdb.ini:/opt/couchdb/etc/local.d/docker.ini
+    restart: always
+    environment:
+      - COUCHDB_USER=${COUCHDB_USER}
+      - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
+    labels:
+      - "traefik.enable=true"
+      # https
+      - "traefik.http.routers.couchdb.rule=host(`nomie-data.home.arpa`)"
+      - "traefik.http.routers.couchdb.entrypoints=websecure"
+      - 'traefik.http.routers.couchdb.tls=true'
+      - "traefik.http.services.couchdb.loadbalancer.server.port=5984"
+      # http
+      - "traefik.http.routers.couchdb-insecure.rule=host(`nomie-data.home.arpa`)"
+      - "traefik.http.routers.couchdb-insecure.entrypoints=web"
+
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
+
