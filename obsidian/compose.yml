@@ -21,40 +21,40 @@ services:
     restart: unless-stopped
 
 
-  obsidian-remote:
-    image: lscr.io/linuxserver/obsidian:latest
-    container_name: obsidian-remote
-    depends_on:
-      - syncthing
-      - anysocket-learning
-    networks:
-      - traefik-net
-    security_opt:
-      - seccomp:unconfined 
-    environment:
-      - PUID=${UID}
-      - PGID=${GID}
-      - TZ=${TZ}
-      - FM_HOME=/vaults
-    volumes:
-      - ./data/obsidianVaults:/vaults
-    ports:
-      - 7889:3000
-      - 7839:3001
-    devices:
-      - /dev/dri:/dev/dri 
-    shm_size: "1gb"
-    restart: unless-stopped
-    labels:
-      - "traefik.enable=true"  
-      # https
-      - "traefik.http.routers.obsidian-remote.rule=Host(`obsidian.home`)"      
-      - "traefik.http.routers.obsidian-remote.entrypoints=websecure"      
-      - 'traefik.http.routers.obsidian-remote.tls=true'      
-      - "traefik.http.services.obsidian-remote.loadbalancer.server.port=3000"
-      # http
-      - "traefik.http.routers.obsidian-remote-insecure.rule=Host(`obsidian.home`)"
-      - "traefik.http.routers.obsidian-remote-insecure.entrypoints=web"
+  # obsidian-remote:
+  #   image: lscr.io/linuxserver/obsidian:latest
+  #   container_name: obsidian-remote
+  #   depends_on:
+  #     - syncthing
+  #     - anysocket-learning
+  #   networks:
+  #     - traefik-net
+  #   security_opt:
+  #     - seccomp:unconfined 
+  #   environment:
+  #     - PUID=${UID}
+  #     - PGID=${GID}
+  #     - TZ=${TZ}
+  #     - FM_HOME=/vaults
+  #   volumes:
+  #     - ./data/obsidianVaults:/vaults
+  #   ports:
+  #     - 7889:3000
+  #     - 7839:3001
+  #   devices:
+  #     - /dev/dri:/dev/dri 
+  #   shm_size: "1gb"
+  #   restart: unless-stopped
+  #   labels:
+  #     - "traefik.enable=true"  
+  #     # https
+  #     - "traefik.http.routers.obsidian-remote.rule=Host(`obsidian.home`)"      
+  #     - "traefik.http.routers.obsidian-remote.entrypoints=websecure"      
+  #     - 'traefik.http.routers.obsidian-remote.tls=true'      
+  #     - "traefik.http.services.obsidian-remote.loadbalancer.server.port=3000"
+  #     # http
+  #     - "traefik.http.routers.obsidian-remote-insecure.rule=Host(`obsidian.home`)"
+  #     - "traefik.http.routers.obsidian-remote-insecure.entrypoints=web"
 
 
 
