@@ -13,7 +13,7 @@ services:
     ports:
       - 6967:80
     volumes:
-      - ~/Public/Media:/srv/Media
+      - ~/Public:/srv/Media
       - ./data/filebrowser-media/database.db:/database.db
       - ./data/filebrowser-media/filebrowser.json:/.filebrowser.json
     labels:
