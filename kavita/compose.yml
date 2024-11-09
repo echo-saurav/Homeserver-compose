@@ -1,12 +1,13 @@
 ---
 services:
   kavita:
-    image: jvmilazz0/kavita:latest    # Using the stable branch from the official dockerhub repo.
+    image: jvmilazz0/kavita:latest
     container_name: kavita
     networks:
       - traefik-net
     volumes:
-      - ~/Public/Books/:/books
+      - ~/Public/Books/Kavita:/books
+      - ~/Public/Books/Opendir:/opendir
       - ./data/kavita:/kavita/config
     environment:
       - TZ=${TZ}
@@ -30,6 +31,28 @@ services:
       # http
       - "traefik.http.routers.kavita-insecure.rule=host(`books.home.arpa`)"
       - "traefik.http.routers.kavita-insecure.entrypoints=web"
+
+  calibre:
+    # image: lscr.io/linuxserver/calibre:latest
+    image: linuxserver/calibre:amd64-version-v7.19.0
+    container_name: calibre
+    security_opt:
+      - seccomp:unconfined #optional
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+      # - PASSWORD= #optional
+      # - CLI_ARGS= #optional
+    volumes:
+      - ./data/calibre/config:/config
+      - ~/Public/Books/:/calibre-library
+    ports:
+      - 8020:8080
+      # - 8121:8181
+      # - 8021:8081
+    # restart: unless-stopped
+    restart: no
 
 
 networks:
