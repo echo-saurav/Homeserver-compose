@@ -8,6 +8,7 @@ services:
       - traefik-net
     volumes:
       - ./data/data:/data
+      - ./data/orc-cache:${HOARDER_OCR_CACHE_DIR}
     ports:
       - 3020:3000
     depends_on:
@@ -28,6 +29,9 @@ services:
       MAX_ASSET_SIZE_MB: ${HOARDER_MAX_ASSET_SIZE_MB}
       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
       INFERENCE_TEXT_MODEL: ${INFERENCE_TEXT_MODEL}
+      OCR_CACHE_DIR: ${HOARDER_OCR_CACHE_DIR}
+      OCR_LANGS: ${HOARDER_OCR_LANGS}
+      OCR_CONFIDENCE_THRESHOLD: ${HOARDER_OCR_CONFIDENCE_THRESHOLD}
     labels:
       - "traefik.enable=true"  
       # https
