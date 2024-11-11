@@ -5,6 +5,7 @@ services:
     image: libretranslate/libretranslate
     container_name: libretranslate
     restart: unless-stopped
+    user: "0:0"
     networks:
       - traefik-net
     ports:
@@ -23,9 +24,9 @@ services:
       - LT_UPDATE_MODELS=true
       - LT_LOAD_ONLY=en,bn
     volumes:
-      - libretranslate_api_keys:/app/db
+      - /home/saurav/docker/compose/libreTranslate/data/libretranslate_api_keys:/app/db
       # Keep the models in a docker volume, to avoid re-downloading on startup
-      - libretranslate_models:/home/libretranslate/.local:rw
+      - /home/saurav/docker/compose/libreTranslate/data/libretranslate_models:/home/libretranslate/
     labels:
       - "traefik.enable=true"  
       # https
@@ -38,9 +39,6 @@ services:
       - "traefik.http.routers.libre-insecure.entrypoints=web"
 
 
-volumes:
-  libretranslate_api_keys:
-  libretranslate_models:
 
 
 networks:
