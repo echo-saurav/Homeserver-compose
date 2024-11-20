@@ -3,7 +3,6 @@ services:
   homepage-local:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage-local
-    user: root
     networks:
       - traefik-net
     restart: unless-stopped
