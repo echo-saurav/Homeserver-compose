@@ -4,8 +4,8 @@ client:
   timeout: 20s
 
 storage:
-  type: postgres
-  path: "postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@postgres:5432/${POSTGRES_DB}?sslmode=disable"
+  type: sqlite
+  path: /data/data.db
   caching: true
 
 alerting:
