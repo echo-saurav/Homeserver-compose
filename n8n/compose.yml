@@ -1,70 +1,48 @@
 ---
 services:
-  n8n:
-    # image: docker.n8n.io/n8nio/n8n
-    # image: docker.n8n.io/n8nio/n8n:1.29.1
-    image: docker.n8n.io/n8nio/n8n:1.31.2
-    container_name: n8nio
-    user: root
-    tty: true
-    stdin_open: true
-    networks:
-      - traefik-net
-    restart: always
-    environment:
-      - DB_TYPE=postgresdb
-      - DB_POSTGRESDB_HOST=n8npostgres
-      - DB_POSTGRESDB_PORT=5432
-      - DB_POSTGRESDB_DATABASE=${N8N_POSTGRES_DB}
-      - DB_POSTGRESDB_USER=${N8N_POSTGRES_NON_ROOT_USER}
-      - DB_POSTGRESDB_PASSWORD=${N8N_POSTGRES_NON_ROOT_PASSWORD}
-      - N8N_SECURE_COOKIE=false
-      - N8N_HOST=n8n.home
-    ports:
-      - 5678:5678
-    links:
-      - n8npostgres
-    depends_on:
-      n8npostgres:
-        condition: service_healthy
+  n8nio:
+    image: docker.n8n.io/n8nio/n8n:1.67.1
+    container_name: n8n
     volumes:
-      - ./data/n8nConfig:/root/.n8n
-      - ./data/files:/root/files
+      - ./data/n8n_data:/home/node/.n8n
+      - ./data/files:/files
       # correct time
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro 
+    ports:
+      - 5673:5673
+    networks:
+      - traefik-net
+    environment:
+      - GENERIC_TIMEZONE=${TZ}
+      - N8N_SECURE_COOKIE=false
+      - N8N_HOST=192.168.0.120
+      - N8N_PORT=5673
+      # - N8N_PATH=/n8n
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=false
+      - N8N_VERSION_NOTIFICATIONS_ENABLED=false
+      - N8N_HIRING_BANNER_ENABLED=false
+      - N8N_PUBLIC_API_SWAGGERUI_DISABLED=false
+      - N8N_PUBLIC_API_DISABLED=false
+      - N8N_TEMPLATES_ENABLED=true
+      - N8N_LOG_FILE_COUNT_MAX=50
+      - N8N_LOG_FILE_SIZE_MAX=10
+      # - N8N_EDITOR_BASE_URL=
+      - N8N_PROTOCOL=http
+      - NODE_ENV=production
+    tty: true
+    stdin_open: true
     labels:
-      - "traefik.enable=true"  
+      - "traefik.enable=true"
       # https
-      - "traefik.http.routers.n8n.rule=Host(`n8n.home`)" 
-      - "traefik.http.routers.n8n.entrypoints=websecure"      
-      - 'traefik.http.routers.n8n.tls=true' 
-      - "traefik.http.services.n8n.loadbalancer.server.port=5678"
+      - "traefik.http.routers.n8n.rule=Host(`n8n.home`)"
+      - "traefik.http.routers.n8n.entrypoints=websecure"
+      - 'traefik.http.routers.n8n.tls=true'
+      - "traefik.http.services.n8n.loadbalancer.server.port=5673"
       # http
       - "traefik.http.routers.n8n-insecure.rule=Host(`n8n.home`)"
       - "traefik.http.routers.n8n-insecure.entrypoints=web"
 
-
-  n8npostgres:
-    image: postgres:15
-    container_name: n8nPost
-    restart: always
-    networks:
-      - traefik-net
-    environment:
-      - N8N_POSTGRES_DB
-      - N8N_POSTGRES_USER
-      - N8N_POSTGRES_PASSWORD
-      - N8N_POSTGRES_NON_ROOT_USER
-      - N8N_POSTGRES_NON_ROOT_PASSWORD
-    volumes:
-      - ./data/database:/var/lib/postgresql/data
-      - ./init-data.sh:/docker-entrypoint-initdb.d/init-data.sh
-    healthcheck:
-      test: ['CMD-SHELL', 'pg_isready -h localhost -U ${POSTGRES_USER} -d ${POSTGRES_DB}']
-      interval: 5s
-      timeout: 5s
-      retries: 10
 
 
 networks:
