@@ -3,11 +3,12 @@ services:
   homepage-local:
     image: ghcr.io/gethomepage/homepage:latest
     container_name: homepage-local
+    user: root
     networks:
       - traefik-net
-    restart: unless-stopped    
-    depends_on:
-      - dockerproxy-homepage-local
+    restart: unless-stopped
+    # depends_on:
+    #   - dockerproxy-homepage-local
     ports:
       - 2222:3000
     environment:
@@ -31,6 +32,7 @@ services:
       - HOMEPAGE_VAR_IMMICH=${IMMICH_API}
       - HOMEPAGE_VAR_TAILSCALE_IP=${TAILSCALE_IP}
     volumes:
+      # - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
       - ./data/homepage:/app/config 
     labels:
       - "traefik.enable=true"  
@@ -44,22 +46,22 @@ services:
       - "traefik.http.routers.hm-insecure.entrypoints=web"
 
 
-  dockerproxy-homepage-local:
-    image: ghcr.io/tecnativa/docker-socket-proxy:latest
-    container_name: dockerproxy-homepage-local
-    networks:
-      - traefik-net
-    environment:
-    - CONTAINERS=1 # Allow access to viewing containers
-    - SERVICES=1 # Allow access to viewing services (necessary when using Docker Swarm)
-    - TASKS=1 # Allow access to viewing tasks (necessary when using Docker Swarm)
-    - POST=0 # Disallow any POST operations (effectively read-only)
-    ports:
-    - 127.0.0.1:2377:2375
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
-    restart: unless-stopped
-
+  # dockerproxy-homepage-local:
+  #   image: ghcr.io/tecnativa/docker-socket-proxy:latest
+  #   container_name: dockerproxy-homepage-local
+  #   networks:
+  #     - traefik-net
+  #   environment:
+  #   - CONTAINERS=1 # Allow access to viewing containers
+  #   - SERVICES=1 # Allow access to viewing services (necessary when using Docker Swarm)
+  #   - TASKS=1 # Allow access to viewing tasks (necessary when using Docker Swarm)
+  #   - POST=0 # Disallow any POST operations (effectively read-only)
+  #   ports:
+  #   - 127.0.0.1:2377:2375
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+  #   restart: unless-stopped
+  #
 
 networks:
   traefik-net:
