@@ -3,6 +3,7 @@ services:
   n8nio:
     image: docker.n8n.io/n8nio/n8n:1.67.1
     container_name: n8n
+    restart: always
     volumes:
       - ./data/n8n_data:/home/node/.n8n
       - ./data/files:/files
