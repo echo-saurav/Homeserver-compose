@@ -1,38 +1,39 @@
 ---
 services:
-  couchdb:
-    image: apache/couchdb:3.3.2
-    container_name: couchdb
-    networks:
-      - traefik-net
-    ports:
-      - 5984:5984
-    volumes:
-      - ./data/couchdb/:/opt/couchdb/data
-      - ./couchdb.ini:/opt/couchdb/etc/local.d/docker.ini
-    restart: always
-    environment:
-      - COUCHDB_USER=${COUCHDB_USER}
-      - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
-    labels:
-      - "traefik.enable=true"
-      # Duck dns
-      - "traefik.http.routers.nomie-duck.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/nomie`)"
-      - "traefik.http.routers.nomie-duck.entrypoints=websecure"
-      - 'traefik.http.routers.nomie-duck.tls=true' 
-      # middlewares
-      # - "traefik.http.middlewares.nomie-duck-strip.stripprefix.prefixes=/couchdb"
-      # - "traefik.http.routers.nomie-duck.middlewares=nomie-duck-strip"
-      # local dns
-      # https
-      - "traefik.http.routers.couchdb.rule=host(`nomie-data.home.arpa`)"
-      - "traefik.http.routers.couchdb.entrypoints=websecure"
-      - 'traefik.http.routers.couchdb.tls=true'
-      - "traefik.http.services.couchdb.loadbalancer.server.port=5984"
-      # http
-      - "traefik.http.routers.couchdb-insecure.rule=host(`nomie-data.home.arpa`)"
-      - "traefik.http.routers.couchdb-insecure.entrypoints=web"
-
+  # Removing as i am not using it anymore
+  # couchdb:
+  #   image: apache/couchdb:3.3.2
+  #   container_name: couchdb
+  #   networks:
+  #     - traefik-net
+  #   ports:
+  #     - 5984:5984
+  #   volumes:
+  #     - ./data/couchdb/:/opt/couchdb/data
+  #     - ./couchdb.ini:/opt/couchdb/etc/local.d/docker.ini
+  #   restart: always
+  #   environment:
+  #     - COUCHDB_USER=${COUCHDB_USER}
+  #     - COUCHDB_PASSWORD=${COUCHDB_PASSWORD}
+  #   labels:
+  #     - "traefik.enable=true"
+  #     # Duck dns
+  #     - "traefik.http.routers.nomie-duck.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/nomie`)"
+  #     - "traefik.http.routers.nomie-duck.entrypoints=websecure"
+  #     - 'traefik.http.routers.nomie-duck.tls=true' 
+  #     # middlewares
+  #     # - "traefik.http.middlewares.nomie-duck-strip.stripprefix.prefixes=/couchdb"
+  #     # - "traefik.http.routers.nomie-duck.middlewares=nomie-duck-strip"
+  #     # local dns
+  #     # https
+  #     - "traefik.http.routers.couchdb.rule=host(`nomie-data.home.arpa`)"
+  #     - "traefik.http.routers.couchdb.entrypoints=websecure"
+  #     - 'traefik.http.routers.couchdb.tls=true'
+  #     - "traefik.http.services.couchdb.loadbalancer.server.port=5984"
+  #     # http
+  #     - "traefik.http.routers.couchdb-insecure.rule=host(`nomie-data.home.arpa`)"
+  #     - "traefik.http.routers.couchdb-insecure.entrypoints=web"
+  #
   # nomie6:
   #   image: ghcr.io/echo-saurav/nomie6-oss:latest
   #   container_name: nomie6
