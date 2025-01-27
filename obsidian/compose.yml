@@ -1,25 +1,26 @@
 
 services:
-  syncthing:
-    image: lscr.io/linuxserver/syncthing:latest
-    container_name: syncthing-obsidian
-    hostname: syncthing 
-    networks:
-      - traefik-net
-    environment:
-      - PUID=${UID}
-      - PGID=${GID}
-      - TZ=${TZ}
-    volumes:
-      - ./data/syncthing:/config
-      - ./data/obsidianVaults:/obsidianVaults
-    ports:
-      - 6673:8384
-      # - 22000:22000/tcp
-      # - 22000:22000/udp
-      # - 21027:21027/udp
-    restart: unless-stopped
-
+# not using anymore  
+  # syncthing:
+  #   image: lscr.io/linuxserver/syncthing:latest
+  #   container_name: syncthing-obsidian
+  #   hostname: syncthing 
+  #   networks:
+  #     - traefik-net
+  #   environment:
+  #     - PUID=${UID}
+  #     - PGID=${GID}
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ./data/syncthing:/config
+  #     - ./data/obsidianVaults:/obsidianVaults
+  #   ports:
+  #     - 6673:8384
+  #     # - 22000:22000/tcp
+  #     # - 22000:22000/udp
+  #     # - 21027:21027/udp
+  #   restart: unless-stopped
+  #
 
   # obsidian-remote:
   #   image: lscr.io/linuxserver/obsidian:latest
@@ -58,24 +59,24 @@ services:
 
 
 
-  anysocket-learning:
-    image: lynxaegon/obsidian-anysocket-sync-server
-    container_name: anysocket-learning
-    restart: always
-    depends_on:
-      - syncthing
-    networks:
-      - traefik-net
-    ports:
-      - 4391:3000
-    volumes:
-      - ./data/anysocket-learning:/app/data
-      - ./data/config-learning.js:/app/config.js
-      
+  # anysocket-learning:
+  #   image: lynxaegon/obsidian-anysocket-sync-server
+  #   container_name: anysocket-learning
+  #   restart: always
+  #   depends_on:
+  #     - syncthing
+  #   networks:
+  #     - traefik-net
+  #   ports:
+  #     - 4391:3000
+  #   volumes:
+  #     - ./data/anysocket-learning:/app/data
+  #     - ./data/config-learning.js:/app/config.js
+  #
+  #
 
-
-networks:
-  traefik-net:
-    external: true
-    name: traefik-net
-
+# networks:
+#   traefik-net:
+#     external: true
+#     name: traefik-net
+#
