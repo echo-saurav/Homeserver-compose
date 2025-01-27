@@ -45,6 +45,7 @@ services:
     image: filebrowser/filebrowser
     restart: unless-stopped
     container_name: filebrowser-private
+    user: "${UID}:${GID}"
     networks:
       - traefik-net
     environment:
