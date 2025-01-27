@@ -21,7 +21,7 @@ services:
       - ND_LASTFM_SECRET=${LAST_FM_SECRET}
     volumes:
       - ./data/navidrome:/data
-      - ~/storage/public/audio/songs/:/music:ro
+      - ~/Public/Media/Music/:/music:ro 
     labels:
       - "traefik.enable=true"  
       # adguard domain
