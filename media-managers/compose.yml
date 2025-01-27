@@ -62,52 +62,52 @@ services:
 
 
 
-  bazarr:
-    image: lscr.io/linuxserver/bazarr:latest
-    container_name: bazarr
-    depends_on:
-      - whisperasr
-    networks:
-      - traefik-net
-    environment:
-      - PUID=${UID}
-      - PGID=${GID}
-      - TZ=${TZ}
-    volumes:
-      - ./data/bazarr/config:/config
-      - ~/Public/Media/Movies:/movies 
-      - ~/Public/Media/TVShows:/tv 
-    ports:
-      - 6767:6767
-    restart: unless-stopped
-    labels:
-      - "traefik.enable=true"  
-      # https
-      - "traefik.http.routers.bazarr.rule=Host(`bazarr.home`)"      
-      - "traefik.http.routers.bazarr.entrypoints=websecure"      
-      - 'traefik.http.routers.bazarr.tls=true'      
-      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
-      # http
-      - "traefik.http.routers.bazarr-insecure.rule=Host(`bazarr.home`)"
-      - "traefik.http.routers.bazarr-insecure.entrypoints=web"
+  # bazarr:
+  #   image: lscr.io/linuxserver/bazarr:latest
+  #   container_name: bazarr
+  #   depends_on:
+  #     - whisperasr
+  #   networks:
+  #     - traefik-net
+  #   environment:
+  #     - PUID=${UID}
+  #     - PGID=${GID}
+  #     - TZ=${TZ}
+  #   volumes:
+  #     - ./data/bazarr/config:/config
+  #     - ~/Public/Media/Movies:/movies 
+  #     - ~/Public/Media/TVShows:/tv 
+  #   ports:
+  #     - 6767:6767
+  #   restart: unless-stopped
+  #   labels:
+  #     - "traefik.enable=true"  
+  #     # https
+  #     - "traefik.http.routers.bazarr.rule=Host(`bazarr.home`)"      
+  #     - "traefik.http.routers.bazarr.entrypoints=websecure"      
+  #     - 'traefik.http.routers.bazarr.tls=true'      
+  #     - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+  #     # http
+  #     - "traefik.http.routers.bazarr-insecure.rule=Host(`bazarr.home`)"
+  #     - "traefik.http.routers.bazarr-insecure.entrypoints=web"
+  #
 
-
-  whisperasr:
-    image: onerahmet/openai-whisper-asr-webservice:latest
-    container_name: whisperasr
-    volumes:
-      - ./data/whisperasr/data:/data/whisper
-      - ./data/whisperasr/cache:/root/.cache/whisper
-    environment:
-      - ASR_MODEL_PATH=/data/whisper
-      - ASR_MODEL=small
-      - ASR_ENGINE=faster_whisper
-    ports:
-      - 9001:9000
-    networks:
-      - traefik-net
-    restart: unless-stopped
-
+  # whisperasr:
+  #   image: onerahmet/openai-whisper-asr-webservice:latest
+  #   container_name: whisperasr
+  #   volumes:
+  #     - ./data/whisperasr/data:/data/whisper
+  #     - ./data/whisperasr/cache:/root/.cache/whisper
+  #   environment:
+  #     - ASR_MODEL_PATH=/data/whisper
+  #     - ASR_MODEL=small
+  #     - ASR_ENGINE=faster_whisper
+  #   ports:
+  #     - 9001:9000
+  #   networks:
+  #     - traefik-net
+  #   restart: unless-stopped
+  #
 
 
   prowlarr:
