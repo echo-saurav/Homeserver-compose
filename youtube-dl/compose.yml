@@ -3,50 +3,34 @@ services:
   ytdl_material:
     image: tzahi12345/youtubedl-material:latest
     container_name: youtube-dl
+    restart: always
     ports:
-      - "8998:17442"
+      - 8998:17442
     networks:
       - traefik-net
     environment: 
-      ytdl_mongodb_connection_string: 'mongodb://ytdl-mongo-db:27017'
-      ytdl_use_local_db: 'false'
+      ytdl_use_local_db: 'true'
       write_ytdl_config: 'true'
       UID: ${UID}
       GID: ${GID}
-    restart: unless-stopped
-    depends_on:
-      - ytdl-mongo-db
+      TZ: ${TZ}
     volumes:
-      - ./data/subscriptions:/app/subscriptions
-      - ./data/users:/app/users
-      - ./data/appdata:/app/appdata
-      # bind to media dirs
-      - ~/storage/public/audio/youtube-dl:/app/audio
-      - ~/storage/private/youtube-dl:/app/video
+      - ./data/youtube-dl/appdata:/app/appdata
+      - ./data/youtube-dl/users:/app/users
+      # private media bind
+      - ~/Public/Media/Music/youtube-audio:/app/audio
+      - ~/Public/Media/Youtube:/app/video
+      - ~/Public/Media/Music/subscriptions-audio:/app/subscriptions
     labels:
-      - "traefik.enable=true"  
+      - "traefik.enable=true"
       # https
-      - "traefik.http.routers.yt.rule=Host(`youtube-dl.home`)"      
-      - "traefik.http.routers.yt.entrypoints=websecure"      
-      - 'traefik.http.routers.yt.tls=true'      
+      - "traefik.http.routers.yt.rule=Host(`youtube-dl.home`)"
+      - "traefik.http.routers.yt.entrypoints=websecure"
+      - 'traefik.http.routers.yt.tls=true'
       - "traefik.http.services.yt.loadbalancer.server.port=17442"
       # http
       - "traefik.http.routers.yt-insecure.rule=Host(`youtube-dl.home`)"
       - "traefik.http.routers.yt-insecure.entrypoints=web"
-
-
-
-  ytdl-mongo-db:
-    image: mongo:4
-    container_name: ytdl-mongo-db
-    networks:
-      - traefik-net
-    volumes:
-      - ./data/db/:/data/db
-    # logging:
-    #     driver: "none"          
-    restart: unless-stopped
-
 
 
 networks:
