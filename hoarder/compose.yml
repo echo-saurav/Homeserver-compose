@@ -1,105 +1,106 @@
 ---
 services:
-  web:
-    image: ghcr.io/hoarder-app/hoarder:${HOARDER_VERSION:-release}
-    container_name: hoarder-app
-    restart: unless-stopped
-    networks:
-      - traefik-net
-    volumes:
-      - ./data/data:/data
-      - ./data/orc-cache:${HOARDER_OCR_CACHE_DIR}
-    ports:
-      - 3020:3000
-    depends_on:
-      - chrome
-      - meilisearch
-    # env_file:
-    #   - .env
-    environment:
-      MEILI_ADDR: http://meilisearch:7700
-      BROWSER_WEB_URL: http://chrome:9222
-      DATA_DIR: /data
-      NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
-      NEXTAUTH_SECRET: ${HOARDER_NEXTAUTH_SECRET}
-      MEILI_MASTER_KEY: ${HOARDER_MEILI_MASTER_KEY}
-      CRAWLER_FULL_PAGE_SCREENSHOT: ${HOARDER_CRAWLER_FULL_PAGE_SCREENSHOT}
-      CRAWLER_NAVIGATE_TIMEOUT_SEC: ${HOARDER_CRAWLER_NAVIGATE_TIMEOUT_SEC}
-      CRAWLER_JOB_TIMEOUT_SEC: ${HOARDER_CRAWLER_JOB_TIMEOUT_SEC}
-      MAX_ASSET_SIZE_MB: ${HOARDER_MAX_ASSET_SIZE_MB}
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
-      INFERENCE_TEXT_MODEL: ${INFERENCE_TEXT_MODEL}
-      OCR_CACHE_DIR: ${HOARDER_OCR_CACHE_DIR}
-      OCR_LANGS: ${HOARDER_OCR_LANGS}
-      OCR_CONFIDENCE_THRESHOLD: ${HOARDER_OCR_CONFIDENCE_THRESHOLD}
-    labels:
-      - "traefik.enable=true"  
-      # https
-      - "traefik.http.routers.horder.rule=Host(`hoarder.home`)" 
-      - "traefik.http.routers.horder.entrypoints=websecure" 
-      - "traefik.http.routers.horder.tls=true"
-      - "traefik.http.services.horder.loadbalancer.server.port=3000"
-      # http
-      - "traefik.http.routers.horder-insecure.rule=Host(`hoarder.home`)"
-      - "traefik.http.routers.horder-insecure.entrypoints=web"
-
-
-  chrome:
-    image: gcr.io/zenika-hub/alpine-chrome:123
-    container_name: hoarder-app-chrome
-    restart: unless-stopped
-    networks:
-      - traefik-net
-    command:
-      - --no-sandbox
-      - --disable-gpu
-      - --disable-dev-shm-usage
-      - --remote-debugging-address=0.0.0.0
-      - --remote-debugging-port=9222
-      - --hide-scrollbars
-    environment:
-      MEILI_ADDR: http://meilisearch:7700
-      BROWSER_WEB_URL: http://chrome:9222
-      DATA_DIR: /data
-      NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
-      NEXTAUTH_SECRET: ${HOARDER_NEXTAUTH_SECRET}
-      MEILI_MASTER_KEY: ${HOARDER_MEILI_MASTER_KEY}
-      CRAWLER_FULL_PAGE_SCREENSHOT: ${HOARDER_CRAWLER_FULL_PAGE_SCREENSHOT}
-      CRAWLER_NAVIGATE_TIMEOUT_SEC: ${HOARDER_CRAWLER_NAVIGATE_TIMEOUT_SEC}
-      CRAWLER_JOB_TIMEOUT_SEC: ${HOARDER_CRAWLER_JOB_TIMEOUT_SEC}
-      MAX_ASSET_SIZE_MB: ${HOARDER_MAX_ASSET_SIZE_MB}
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
-      INFERENCE_TEXT_MODEL: ${INFERENCE_TEXT_MODEL}
-
-  meilisearch:
-    image: getmeili/meilisearch:v1.6
-    container_name: hoarder-app-meilisearch
-    networks:
-      - traefik-net
-    restart: unless-stopped
-    # env_file:
-    #   - .env
-    volumes:
-      - ./data/meilisearch:/meili_data
-    environment:
-      MEILI_NO_ANALYTICS: "true"
-      MEILI_ADDR: http://meilisearch:7700
-      BROWSER_WEB_URL: http://chrome:9222
-      DATA_DIR: /data
-      NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
-      NEXTAUTH_SECRET: ${HOARDER_NEXTAUTH_SECRET}
-      MEILI_MASTER_KEY: ${HOARDER_MEILI_MASTER_KEY}
-      CRAWLER_FULL_PAGE_SCREENSHOT: ${HOARDER_CRAWLER_FULL_PAGE_SCREENSHOT}
-      CRAWLER_NAVIGATE_TIMEOUT_SEC: ${HOARDER_CRAWLER_NAVIGATE_TIMEOUT_SEC}
-      CRAWLER_JOB_TIMEOUT_SEC: ${HOARDER_CRAWLER_JOB_TIMEOUT_SEC}
-      MAX_ASSET_SIZE_MB: ${HOARDER_MAX_ASSET_SIZE_MB}
-      OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
-      INFERENCE_TEXT_MODEL: ${INFERENCE_TEXT_MODEL}
-
-
-
-networks:
-  traefik-net:
-    external: true
-    name: traefik-net
-
+# not using anymore, instad i am using linkwarden 
+#   web:
+#     image: ghcr.io/hoarder-app/hoarder:${HOARDER_VERSION:-release}
+#     container_name: hoarder-app
+#     restart: unless-stopped
+#     networks:
+#       - traefik-net
+#     volumes:
+#       - ./data/data:/data
+#       - ./data/orc-cache:${HOARDER_OCR_CACHE_DIR}
+#     ports:
+#       - 3020:3000
+#     depends_on:
+#       - chrome
+#       - meilisearch
+#     # env_file:
+#     #   - .env
+#     environment:
+#       MEILI_ADDR: http://meilisearch:7700
+#       BROWSER_WEB_URL: http://chrome:9222
+#       DATA_DIR: /data
+#       NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
+#       NEXTAUTH_SECRET: ${HOARDER_NEXTAUTH_SECRET}
+#       MEILI_MASTER_KEY: ${HOARDER_MEILI_MASTER_KEY}
+#       CRAWLER_FULL_PAGE_SCREENSHOT: ${HOARDER_CRAWLER_FULL_PAGE_SCREENSHOT}
+#       CRAWLER_NAVIGATE_TIMEOUT_SEC: ${HOARDER_CRAWLER_NAVIGATE_TIMEOUT_SEC}
+#       CRAWLER_JOB_TIMEOUT_SEC: ${HOARDER_CRAWLER_JOB_TIMEOUT_SEC}
+#       MAX_ASSET_SIZE_MB: ${HOARDER_MAX_ASSET_SIZE_MB}
+#       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
+#       INFERENCE_TEXT_MODEL: ${INFERENCE_TEXT_MODEL}
+#       OCR_CACHE_DIR: ${HOARDER_OCR_CACHE_DIR}
+#       OCR_LANGS: ${HOARDER_OCR_LANGS}
+#       OCR_CONFIDENCE_THRESHOLD: ${HOARDER_OCR_CONFIDENCE_THRESHOLD}
+#     labels:
+#       - "traefik.enable=true"  
+#       # https
+#       - "traefik.http.routers.horder.rule=Host(`hoarder.home`)" 
+#       - "traefik.http.routers.horder.entrypoints=websecure" 
+#       - "traefik.http.routers.horder.tls=true"
+#       - "traefik.http.services.horder.loadbalancer.server.port=3000"
+#       # http
+#       - "traefik.http.routers.horder-insecure.rule=Host(`hoarder.home`)"
+#       - "traefik.http.routers.horder-insecure.entrypoints=web"
+#
+#
+#   chrome:
+#     image: gcr.io/zenika-hub/alpine-chrome:123
+#     container_name: hoarder-app-chrome
+#     restart: unless-stopped
+#     networks:
+#       - traefik-net
+#     command:
+#       - --no-sandbox
+#       - --disable-gpu
+#       - --disable-dev-shm-usage
+#       - --remote-debugging-address=0.0.0.0
+#       - --remote-debugging-port=9222
+#       - --hide-scrollbars
+#     environment:
+#       MEILI_ADDR: http://meilisearch:7700
+#       BROWSER_WEB_URL: http://chrome:9222
+#       DATA_DIR: /data
+#       NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
+#       NEXTAUTH_SECRET: ${HOARDER_NEXTAUTH_SECRET}
+#       MEILI_MASTER_KEY: ${HOARDER_MEILI_MASTER_KEY}
+#       CRAWLER_FULL_PAGE_SCREENSHOT: ${HOARDER_CRAWLER_FULL_PAGE_SCREENSHOT}
+#       CRAWLER_NAVIGATE_TIMEOUT_SEC: ${HOARDER_CRAWLER_NAVIGATE_TIMEOUT_SEC}
+#       CRAWLER_JOB_TIMEOUT_SEC: ${HOARDER_CRAWLER_JOB_TIMEOUT_SEC}
+#       MAX_ASSET_SIZE_MB: ${HOARDER_MAX_ASSET_SIZE_MB}
+#       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
+#       INFERENCE_TEXT_MODEL: ${INFERENCE_TEXT_MODEL}
+#
+#   meilisearch:
+#     image: getmeili/meilisearch:v1.6
+#     container_name: hoarder-app-meilisearch
+#     networks:
+#       - traefik-net
+#     restart: unless-stopped
+#     # env_file:
+#     #   - .env
+#     volumes:
+#       - ./data/meilisearch:/meili_data
+#     environment:
+#       MEILI_NO_ANALYTICS: "true"
+#       MEILI_ADDR: http://meilisearch:7700
+#       BROWSER_WEB_URL: http://chrome:9222
+#       DATA_DIR: /data
+#       NEXTAUTH_URL: ${HOARDER_NEXTAUTH_URL}
+#       NEXTAUTH_SECRET: ${HOARDER_NEXTAUTH_SECRET}
+#       MEILI_MASTER_KEY: ${HOARDER_MEILI_MASTER_KEY}
+#       CRAWLER_FULL_PAGE_SCREENSHOT: ${HOARDER_CRAWLER_FULL_PAGE_SCREENSHOT}
+#       CRAWLER_NAVIGATE_TIMEOUT_SEC: ${HOARDER_CRAWLER_NAVIGATE_TIMEOUT_SEC}
+#       CRAWLER_JOB_TIMEOUT_SEC: ${HOARDER_CRAWLER_JOB_TIMEOUT_SEC}
+#       MAX_ASSET_SIZE_MB: ${HOARDER_MAX_ASSET_SIZE_MB}
+#       OLLAMA_BASE_URL: ${OLLAMA_BASE_URL}
+#       INFERENCE_TEXT_MODEL: ${INFERENCE_TEXT_MODEL}
+#
+#
+#
+# networks:
+#   traefik-net:
+#     external: true
+#     name: traefik-net
+#
