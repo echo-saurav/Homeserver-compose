@@ -8,13 +8,14 @@ services:
     # never: Compose doesn't pull the image from a registry and relies on the platform cached image. If there is no cached image, a failure is reported.
     # missing: Compose pulls the image only if it's not available in the platform cache. (default)
     # build: Compose builds the image. Compose rebuilds the image if it's already present.
-    #pull_policy: always
+    # pull_policy: always
     volumes:
-      - ./data/glance.yml:/app/glance.yml
-      - ./data/assets:/assets
+      - ./data/glance.yml:/app/config/glance.yml
+      - ./data/assets/:/assets
       # host time setting
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     ports:
       - 6149:8080
     restart: unless-stopped
