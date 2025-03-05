@@ -217,18 +217,7 @@ services:
       # http
       - "traefik.http.routers.jellyseerr-local-insecure.rule=Host(`request.home`)"
       - "traefik.http.routers.jellyseerr-local-insecure.entrypoints=web"
-      # duck dns
-      # https
-      - traefik.http.routers.jellyseerr.rule=Host(`${DUCK_BASE_JELLYSEERR}`)
-      - traefik.http.routers.jellyseerr.entrypoints=websecure
-      - traefik.http.routers.jellyseerr.tls=true
-      # duck dns ssl
-      - traefik.http.routers.jellyseerr.tls.certresolver=myresolver
-      # service
       - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
-      # http
-      - traefik.http.routers.jellyseerr-insecure.rule=Host(`${DUCK_BASE_JELLYSEERR}`)
-      - traefik.http.routers.jellyseerr-insecure.entrypoints=web
 
 
   # fileflows:
