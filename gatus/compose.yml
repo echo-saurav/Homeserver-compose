@@ -31,6 +31,12 @@ services:
       # http
       - "traefik.http.routers.gatus-insecure.rule=Host(`gatus.home`)"
       - "traefik.http.routers.gatus-insecure.entrypoints=web"
+      # glance
+      - "glance.name=Gatus"
+      - "glance.icon=si:downdetector"
+      - "glance.url=http://gatus.home"
+      - "glance.description=Gatus down detector"
+      - "glance.id=gatus"
 
 
 

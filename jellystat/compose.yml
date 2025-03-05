@@ -29,7 +29,12 @@ services:
       # http
       - "traefik.http.routers.jellystat-insecure.rule=host(`jellystat.home`)"
       - "traefik.http.routers.jellystat-insecure.entrypoints=web"
-
+      # glance
+      - "glance.name=Jellystat"
+      - "glance.icon=si:jellyfin"
+      - "glance.url=http://jellystat.home"
+      - "glance.description=Jellystat jellyfin logs"
+      - "glance.id=jellystat"
 
   jellystat-db:
     image: postgres:15.2
@@ -42,6 +47,9 @@ services:
       POSTGRES_PASSWORD: mypassword
     volumes:
       - ./data/postgres-data:/var/lib/postgresql/data
+    labels:
+      - "glance.parent=jellystat"
+      - "glance.name=DB"
 
 
 networks:

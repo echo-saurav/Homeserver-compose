@@ -43,6 +43,12 @@ services:
       # - "traefik.http.routers.nav-insecure.rule=(Host(`${DUCK_BASE}`) && PathPrefix(`/navmusic`)) || Host(`music.home`)"      
       - "traefik.http.routers.nav-insecure.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/navmusic`)"      
       - "traefik.http.routers.nav-insecure.entrypoints=web"
+      # glance
+      - "glance.name=Navidrome"
+      - "glance.icon=si:applemusic"
+      - "glance.url=https://${DUCK_BASE}/navmusic"
+      - "glance.description=Navidrome"
+      - "glance.id=Navidrome"
 
 
 networks:

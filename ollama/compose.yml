@@ -24,7 +24,12 @@ services:
       # http
       - "traefik.http.routers.open-webui-insecure.rule=host(`ollama.home`)"
       - "traefik.http.routers.open-webui-insecure.entrypoints=web"
-
+      # glance
+      - "glance.name=OpenWebUi"
+      - "glance.icon=si:ollama"
+      - "glance.url=http://ollama.home"
+      - "glance.description=ollama openwebui"
+      - "glance.id=ollama"
 
 
 networks:

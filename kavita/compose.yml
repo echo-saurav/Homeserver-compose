@@ -31,6 +31,13 @@ services:
       # http
       - "traefik.http.routers.kavita-insecure.rule=host(`books.home.arpa`)"
       - "traefik.http.routers.kavita-insecure.entrypoints=web"
+      # glance
+      - "glance.name=Kavita"
+      - "glance.icon=si:bookstack"
+      - "glance.url=https://${DUCK_BASE}/books"
+      - "glance.description=Books reading"
+      - "glance.id=kavita"
+
 
   calibre:
     # image: lscr.io/linuxserver/calibre:latest
@@ -53,6 +60,9 @@ services:
       # - 8021:8081
     # restart: unless-stopped
     restart: no
+    labels:
+      - "glance.parent=kavita"
+      - "glance.name=calibre"
 
 
 networks:

@@ -29,6 +29,12 @@ services:
       # http
       - traefik.http.routers.traefik-insecure.rule=Host(`traefik.home`)
       - traefik.http.routers.traefik-insecure.entrypoints=web
+      # glance
+      - "glance.name=traefik"
+      - "glance.icon=si:traefikproxy"
+      - "glance.url=http://traefik.home"
+      - "glance.description=Traefik"
+      - "glance.id=traefik"
 
 
   mkcert:
@@ -41,6 +47,9 @@ services:
       - domain=*.home,*.home.arpa
     volumes:
       - ./data/mkcert:/root/.local/share/mkcert
+    labels:
+      - "glance.parent=traefik"
+      - "glance.name=mkcert"
 
 
 

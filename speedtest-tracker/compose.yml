@@ -42,7 +42,12 @@ services:
       # http
       - "traefik.http.routers.speed-test-insecure.rule=host(`speed.home.arpa`)"
       - "traefik.http.routers.speed-test-insecure.entrypoints=web"
-
+      # glance
+      - "glance.name=Speed tracker"
+      - "glance.icon=si:speedtest"
+      - "glance.url=http://speed.home.arpa"
+      - "glance.description=Speed tracker"
+      - "glance.id=speed-tracker"
 
 networks:
   traefik-net:

@@ -8,6 +8,13 @@ services:
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock
       - /etc/localtime:/etc/localtime:ro
+    labels:
+      # glance
+      - "glance.name=watchtower"
+      - "glance.icon=si:watchtower"
+      - "glance.description=Update container"
+      - "glance.id=watchtower"
+
     environment:
       WATCHTOWER_CLEANUP: "true"
       WATCHTOWER_HTTP_API_TOKEN: ${WATCHTOWER_HTTP_API_TOKEN}

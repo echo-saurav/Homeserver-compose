@@ -18,6 +18,13 @@ services:
       # http
       - "traefik.http.routers.it-tools-insecure.rule=Host(`tools.home`)"
       - "traefik.http.routers.it-tools-insecure.entrypoints=web"
+      # glance
+      - "glance.name=It Tools"
+      - "glance.icon=si:swagger"
+      - "glance.url=http://tools.home"
+      - "glance.description=it-tools"
+      - "glance.id=it-tools"
+
 
 networks:
   traefik-net:

@@ -21,5 +21,12 @@ services:
       # - 22000:22000/udp
       # - 21027:21027/udp
     restart: unless-stopped
+    labels:
+      # glance
+      - "glance.name=Syncthing"
+      - "glance.icon=si:syncthing"
+      - "glance.url=http://192.168.0.120:3673"
+      - "glance.description=Syncthing sync"
+      - "glance.id=syncthing"
 
 

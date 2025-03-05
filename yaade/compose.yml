@@ -21,6 +21,12 @@ services:
       # http
       - "traefik.http.routers.yaade-insecure.rule=Host(`yaade.home`)"
       - "traefik.http.routers.yaade-insecure.entrypoints=web"
+      # glance
+      - "glance.name=Yaade"
+      - "glance.icon=si:devdotto"
+      - "glance.url=http://yaade.home"
+      - "glance.description=yaade"
+      - "glance.id=yaade"
 
 
 networks:

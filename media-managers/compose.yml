@@ -30,6 +30,12 @@ services:
       # http
       - "traefik.http.routers.radarr-insecure.rule=Host(`radarr.home`)"
       - "traefik.http.routers.radarr-insecure.entrypoints=web"
+      # glance
+      - "glance.name=Radarr"
+      - "glance.icon=si:radarr"
+      - "glance.url=http://radarr.home"
+      - "glance.description=radarr"
+      - "glance.id=radarr"
 
 
 
@@ -59,6 +65,12 @@ services:
       # http
       - "traefik.http.routers.sonarr-insecure.rule=Host(`sonarr.home`)"
       - "traefik.http.routers.sonarr-insecure.entrypoints=web"
+      # glance
+      - "glance.name=Sonarr"
+      - "glance.icon=si:sonarr"
+      - "glance.url=http://sonarr.home"
+      - "glance.description=sonarr"
+      - "glance.id=sonarr"
 
 
 
@@ -137,6 +149,12 @@ services:
       # http
       - "traefik.http.routers.prowlarr-insecure.rule=host(`prowlarr.home`)"
       - "traefik.http.routers.prowlarr-insecure.entrypoints=web"
+      # glance
+      - "glance.name=prowlarr"
+      - "glance.icon=si:qbittorrent"
+      - "glance.url=http://prowlarr.home"
+      - "glance.description=Prowlarr"
+      - "glance.id=prowlarr"
 
 
 
@@ -153,6 +171,12 @@ services:
     ports:
       - "${PORT:-8192}:8191"
     restart: unless-stopped         
+    labels:
+      # glance
+      - "glance.name=Flaresolverr"
+      - "glance.icon=si:qbittorrent"
+      - "glance.description=flaresolverr"
+      - "glance.id=flaresolverr"
 
 
   transmission:
@@ -189,6 +213,12 @@ services:
       # http
       - "traefik.http.routers.transmission-insecure.rule=host(`transmission.home`)"
       - "traefik.http.routers.transmission-insecure.entrypoints=web"
+      # glance
+      - "glance.name=transmission"
+      - "glance.icon=si:transmission"
+      - "glance.url=http://transmission.home"
+      - "glance.description=transmission"
+      - "glance.id=transmission"
 
 
   jellyseerr:
@@ -218,6 +248,12 @@ services:
       - "traefik.http.routers.jellyseerr-local-insecure.rule=Host(`request.home`)"
       - "traefik.http.routers.jellyseerr-local-insecure.entrypoints=web"
       - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
+      # glance
+      - "glance.name=Request"
+      - "glance.icon=si:jellyfin"
+      - "glance.url=http://request.home"
+      - "glance.description=Request movies and series"
+      - "glance.id=request"
 
 
   # fileflows:

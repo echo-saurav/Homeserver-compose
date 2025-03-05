@@ -28,8 +28,12 @@ services:
       # http
       - "traefik.http.routers.adguard-insecure.rule=host(`adguard.home`)"
       - "traefik.http.routers.adguard-insecure.entrypoints=web"
-
-
+      # glance
+      - "glance.name=Adguard"
+      - "glance.icon=si:adguard"
+      - "glance.url=http://adguard.home"
+      - "glance.description=Adguard"
+      - "glance.id=adguard"
 
 networks:
   traefik-net:

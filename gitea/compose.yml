@@ -25,7 +25,12 @@ services:
       # http
       - "traefik.http.routers.gitea-insecure.rule=Host(`gitea.home`)"
       - "traefik.http.routers.gitea-insecure.entrypoints=web"
-
+      # glance
+      - "glance.name=gitea"
+      - "glance.icon=si:gitea"
+      - "glance.url=http://gitea.home"
+      - "glance.description=Gitea github alternative"
+      - "glance.id=gitea"
 
 networks:
   traefik-net:

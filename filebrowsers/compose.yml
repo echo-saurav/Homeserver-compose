@@ -26,6 +26,12 @@ services:
       # http
       - "traefik.http.routers.fs-media-insecure.rule=Host(`files.home`)"
       - "traefik.http.routers.fs-media-insecure.entrypoints=web"
+      # glance
+      - "glance.name=Public filebrowser"
+      - "glance.icon=si:files"
+      - "glance.url=http://files.home"
+      - "glance.description=Public filebrowser"
+      - "glance.id=filebrowser-public"
 
     # not exposing anything to the public internet 
     # i need to think if i want to expose
@@ -69,6 +75,12 @@ services:
       # http
       - "traefik.http.routers.fs-private-insecure.rule=Host(`private.home`)"
       - "traefik.http.routers.fs-private-insecure.entrypoints=web"
+      # glance
+      - "glance.name=Filebrowser"
+      - "glance.icon=si:keepassxc"
+      - "glance.url=http://private.home"
+      - "glance.description=Private filebrowser"
+      - "glance.id=filebrowser"
 
 
 networks:
