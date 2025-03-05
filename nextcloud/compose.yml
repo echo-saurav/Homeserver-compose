@@ -2,7 +2,7 @@
 services:
   nextcloud:
     # image: lscr.io/linuxserver/nextcloud:latest
-    image: lscr.io/linuxserver/nextcloud:30.0.0-ls343
+    image: lscr.io/linuxserver/nextcloud:30.0.6-ls368
     container_name: nextcloud
     depends_on:
       - postgres
@@ -69,13 +69,15 @@ services:
       - POSTGRES_USER=postgres
       - POSTGRES_DB=nextcloud
       - TZ=${TZ}
-    healthcheck:
-      test: ["CMD-SHELL", "pg_isready", "-d", "db_prod"]
-      interval: 30s
-      timeout: 60s
-      retries: 5
-      start_period: 80s 
-
+    # healthcheck:
+    #   # test: ["CMD-SHELL", "sh -c pg_isready -U oc_saurav -d nextcloud"]
+    #   # test: ["CMD-SHELL", "pg_isready"]
+    #   # test: pg_isready
+    #   interval: 30s
+    #   timeout: 60s
+    #   retries: 5
+    #   start_period: 80s 
+    #
 
   nextcloud-whiteboard-server:
     image: ghcr.io/nextcloud-releases/whiteboard:release
