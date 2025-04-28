@@ -10,7 +10,7 @@ services:
     # build: Compose builds the image. Compose rebuilds the image if it's already present.
     # pull_policy: always
     volumes:
-      - ./data/glance.yml:/app/config/glance.yml
+      - ./data/config/:/app/config
       - ./data/assets/:/assets
       # host time setting
       - /etc/timezone:/etc/timezone:ro
