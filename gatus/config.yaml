@@ -109,3 +109,12 @@ endpoints:
     alerts:
       - type: discord
 
+  - name: github
+    url: https://github.com
+    group: Public sites
+    interval: 60s
+    conditions:
+      - "[STATUS] == 200"
+    alerts:
+      - type: discord
+
