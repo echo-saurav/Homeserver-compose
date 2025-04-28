@@ -8,3 +8,5 @@
 
 # Ignore all docker data dir
 */data
+
+supabase
