@@ -1,7 +1,7 @@
 # Homeserver docker-compose
 
 ## future plan
-- [ ] make https for local networks (accepted by browser)
+- [x] make https for local networks (accepted by browser)
 
 
 
