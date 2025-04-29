@@ -15,7 +15,9 @@ services:
       # host time setting
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # - /var/run/docker.sock:/var/run/docker.sock:ro
+    # environment:
+    #   - DOCKER_HOST=tcp://dockerproxy-glance:2375
     ports:
       - 6149:8080
     restart: unless-stopped
@@ -23,6 +25,10 @@ services:
         - traefik-net
     labels:
       - "traefik.enable=true"
+      # duckdns
+      - traefik.http.routers.glance-public.rule=Host(`${DUCK_BASE}`)
+      - traefik.http.routers.glance-public.entrypoints=websecure
+      - traefik.http.routers.glance-public.tls=true
       # https
       - "traefik.http.routers.glanceapp.rule=host(`glanceapp.home.arpa`)"
       - "traefik.http.routers.glanceapp.entrypoints=websecure"
@@ -32,6 +38,23 @@ services:
       - "traefik.http.routers.glanceapp-insecure.rule=host(`glanceapp.home.arpa`)"
       - "traefik.http.routers.glanceapp-insecure.entrypoints=web"
 
+
+  # dockerproxy-glance:
+  #   image: ghcr.io/tecnativa/docker-socket-proxy:latest
+  #   container_name: dockerproxy-glance
+  #   networks:
+  #     - traefik-net
+  #   environment:
+  #   - CONTAINERS=0 # Allow access to viewing containers
+  #   - SERVICES=0 # Allow access to viewing services (necessary when using Docker Swarm)
+  #   - TASKS=0 # Allow access to viewing tasks (necessary when using Docker Swarm)
+  #   - POST=0 # Disallow any POST operations (effectively read-only)
+  #   ports:
+  #   - 127.0.0.1:2377:2375
+  #   volumes:
+  #     - /var/run/docker.sock:/var/run/docker.sock:ro # Mounted as read-only
+  #   restart: unless-stopped
+ 
 
 networks:
   traefik-net:
