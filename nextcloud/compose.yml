@@ -90,7 +90,7 @@ services:
     #
 
   nextcloud-whiteboard-server:
-    image: ghcr.io/nextcloud-releases/whiteboard:release
+    image: ghcr.io/nextcloud-releases/whiteboard:v1.0.4
     restart: unless-stopped
     container_name: whiteboard-next
     networks:
