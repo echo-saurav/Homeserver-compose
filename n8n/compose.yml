@@ -1,7 +1,8 @@
 ---
 services:
   n8nio:
-    image: docker.n8n.io/n8nio/n8n:1.67.1
+    # image: docker.n8n.io/n8nio/n8n:1.67.1
+    image: docker.n8n.io/n8nio/n8n:1.100.0
     container_name: n8n
     restart: always
     volumes:
@@ -43,12 +44,6 @@ services:
       # http
       - "traefik.http.routers.n8n-insecure.rule=Host(`n8n.home`)"
       - "traefik.http.routers.n8n-insecure.entrypoints=web"
-      # glance
-      - "glance.name=n8n"
-      - "glance.icon=si:n8n"
-      - "glance.url=http://n8n.home"
-      - "glance.description=n8n"
-      - "glance.id=n8n"
 
 
 networks:
