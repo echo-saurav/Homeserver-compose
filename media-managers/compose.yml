@@ -30,12 +30,6 @@ services:
       # http
       - "traefik.http.routers.radarr-insecure.rule=Host(`radarr.home`)"
       - "traefik.http.routers.radarr-insecure.entrypoints=web"
-      # glance
-      - "glance.name=Radarr"
-      - "glance.icon=si:radarr"
-      - "glance.url=http://radarr.home"
-      - "glance.description=radarr"
-      - "glance.id=radarr"
 
 
 
@@ -65,12 +59,6 @@ services:
       # http
       - "traefik.http.routers.sonarr-insecure.rule=Host(`sonarr.home`)"
       - "traefik.http.routers.sonarr-insecure.entrypoints=web"
-      # glance
-      - "glance.name=Sonarr"
-      - "glance.icon=si:sonarr"
-      - "glance.url=http://sonarr.home"
-      - "glance.description=sonarr"
-      - "glance.id=sonarr"
 
 
 
@@ -121,7 +109,6 @@ services:
   #   restart: unless-stopped
   #
 
-
   prowlarr:
     image: lscr.io/linuxserver/prowlarr:latest
     container_name: prowlarr
@@ -149,12 +136,6 @@ services:
       # http
       - "traefik.http.routers.prowlarr-insecure.rule=host(`prowlarr.home`)"
       - "traefik.http.routers.prowlarr-insecure.entrypoints=web"
-      # glance
-      - "glance.name=prowlarr"
-      - "glance.icon=si:qbittorrent"
-      - "glance.url=http://prowlarr.home"
-      - "glance.description=Prowlarr"
-      - "glance.id=prowlarr"
 
 
 
@@ -171,12 +152,6 @@ services:
     ports:
       - "${PORT:-8192}:8191"
     restart: unless-stopped         
-    labels:
-      # glance
-      - "glance.name=Flaresolverr"
-      - "glance.icon=si:qbittorrent"
-      - "glance.description=flaresolverr"
-      - "glance.id=flaresolverr"
 
 
   transmission:
@@ -213,12 +188,6 @@ services:
       # http
       - "traefik.http.routers.transmission-insecure.rule=host(`transmission.home`)"
       - "traefik.http.routers.transmission-insecure.entrypoints=web"
-      # glance
-      - "glance.name=transmission"
-      - "glance.icon=si:transmission"
-      - "glance.url=http://transmission.home"
-      - "glance.description=transmission"
-      - "glance.id=transmission"
 
 
   jellyseerr:
@@ -248,12 +217,6 @@ services:
       - "traefik.http.routers.jellyseerr-local-insecure.rule=Host(`request.home`)"
       - "traefik.http.routers.jellyseerr-local-insecure.entrypoints=web"
       - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
-      # glance
-      - "glance.name=Request"
-      - "glance.icon=si:jellyfin"
-      - "glance.url=http://request.home"
-      - "glance.description=Request movies and series"
-      - "glance.id=request"
 
 
   # fileflows:
@@ -289,6 +252,37 @@ services:
   #     - "traefik.http.routers.fileflows-insecure.rule=host(`flow.home`)"
   #     - "traefik.http.routers.fileflows-insecure.entrypoints=web"
 
+  cleanuparr:
+    image: ghcr.io/cleanuparr/cleanuparr:latest
+    container_name: cleanuparr
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    ports:
+      - 11011:11011
+    volumes:
+      - ./data/cleanuparr:/config
+    environment:
+      - PORT=11011
+      - PUID=${UID}
+      - PGID=${GID}
+      - UMASK=022
+      - TZ=${TZ}
+      # - BASE_PATH=
+
+
+  huntarr:
+    image: ghcr.io/plexguide/huntarr:latest
+    container_name: huntarr
+    restart: unless-stopped
+    networks:
+      - traefik-net
+    ports:
+      - 9705:9705
+    volumes:
+      - ./data//huntarr:/config
+    environment:
+      - TZ=${TZ}
 
 
 
