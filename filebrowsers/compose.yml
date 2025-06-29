@@ -14,7 +14,7 @@ services:
       - 6967:80
     volumes:
       - ~/Public:/srv/Media
-      - ./data/filebrowser-media/database.db:/database.db
+      - ./data/filebrowser-media/filebrowser.db:/database.db
       - ./data/filebrowser-media/filebrowser.json:/.filebrowser.json
     labels:
       - "traefik.enable=true"  
@@ -62,7 +62,7 @@ services:
       - 6968:80
     volumes:
       - ~/Private:/srv/
-      - ./data/filebrowser-private/database.db:/database.db
+      - ./data/filebrowser-private/filebrowser.db:/database.db
       - ./data/filebrowser-private/filebrowser.json:/.filebrowser.json
 
     labels:
