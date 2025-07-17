@@ -26,11 +26,11 @@ services:
       - "traefik.enable=true"  
       # adguard domain
       # https
-      - "traefik.http.routers.navmusic-local.rule=Host(`music.home`)"
+      - "traefik.http.routers.navmusic-local.rule=Host(`music.home.arpa`)"
       - "traefik.http.routers.navmusic-local.entrypoints=websecure"
       - "traefik.http.routers.navmusic-local.tls=true"
       # https
-      - "traefik.http.routers.navmusic-local-insecure.rule=Host(`music.home`)"
+      - "traefik.http.routers.navmusic-local-insecure.rule=Host(`music.home.arpa`)"
       - "traefik.http.routers.navmusic-local-insecure.entrypoints=web"
       # duck dns
       # https
@@ -43,12 +43,6 @@ services:
       # - "traefik.http.routers.nav-insecure.rule=(Host(`${DUCK_BASE}`) && PathPrefix(`/navmusic`)) || Host(`music.home`)"      
       - "traefik.http.routers.nav-insecure.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/navmusic`)"      
       - "traefik.http.routers.nav-insecure.entrypoints=web"
-      # glance
-      - "glance.name=Navidrome"
-      - "glance.icon=si:applemusic"
-      - "glance.url=https://${DUCK_BASE}/navmusic"
-      - "glance.description=Navidrome"
-      - "glance.id=Navidrome"
 
 
 networks:

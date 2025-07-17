@@ -29,12 +29,12 @@ services:
       - "traefik.enable=true"
       # adguard domain
       # secure
-      - "traefik.http.routers.immich-local.rule=Host(`photos.home`)"
+      - "traefik.http.routers.immich-local.rule=Host(`photos.home.arpa`)"
       - "traefik.http.routers.immich-local.entrypoints=websecure"
       - "traefik.http.routers.immich-local.tls=true"
       # duck dns
       # insecure
-      - "traefik.http.routers.immich-local-insecure.rule=Host(`photos.home`)"
+      - "traefik.http.routers.immich-local-insecure.rule=Host(`photos.home.arpa`)"
       - "traefik.http.routers.immich-local-insecure.entrypoints=web"
       # https
       - "traefik.http.routers.immich.rule=Host(`${DUCK_IMMICH}`)"

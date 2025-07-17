@@ -34,7 +34,7 @@ services:
     labels:
       - "traefik.enable=true"
       # https
-      - "traefik.http.routers.webtop.rule=Host(`webtop.home`)"
+      - "traefik.http.routers.webtop.rule=Host(`webtop.home.arpa`)"
       - "traefik.http.routers.webtop.entrypoints=websecure"
       - "traefik.http.routers.webtop.tls=true"
       - "traefik.http.services.webtop.loadbalancer.server.port=3001"
@@ -42,7 +42,7 @@ services:
       - "traefik.http.services.webtop.loadbalancer.serverstransport=ignorecert@file"
       - "traefik.http.services.webtop.loadbalancer.server.scheme=https"
       # http
-      - "traefik.http.routers.webtop-insecure.rule=Host(`webtop.home`)"
+      - "traefik.http.routers.webtop-insecure.rule=Host(`webtop.home.arpa`)"
       - "traefik.http.routers.webtop-insecure.entrypoints=web"
       # Attach middleware to the router
       - "traefik.http.routers.webtop.middlewares=my_custom_headers"

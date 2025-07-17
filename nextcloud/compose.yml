@@ -24,7 +24,7 @@ services:
       # https
       # - "traefik.http.routers.nextcloud.rule=Host(`${DUCK_NEXT}`) || Host(`nextcloud.home`)"
       # adguard domain
-      - "traefik.http.routers.nextcloud-local.rule=Host(`nextcloud.home`)"
+      - "traefik.http.routers.nextcloud-local.rule=Host(`nextcloud.home.arpa`)"
       - "traefik.http.routers.nextcloud-local.entrypoints=websecure"
       - "traefik.http.routers.nextcloud-local.tls=true"
       # duck dns
@@ -55,12 +55,6 @@ services:
       - "traefik.http.routers.nextcloud.middlewares=nextcloud_redirectregex,next_hsts"
       - "traefik.http.routers.nextcloud-insecure.middlewares=nextcloud_redirectregex,next_hsts"
       - "traefik.http.routers.nextcloud-local.middlewares=nextcloud_redirectregex,next_hsts"      
-      # glance
-      - "glance.name=Nextcloud"
-      - "glance.icon=si:nextcloud"
-      - "glance.url=https://${DUCK_NEXT}"
-      - "glance.description=Nextcloud"
-      - "glance.id=nextcloud"
 
 
   postgres:

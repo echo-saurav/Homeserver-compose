@@ -14,19 +14,13 @@ services:
     labels:
       - "traefik.enable=true"  
       # https
-      - "traefik.http.routers.yaade.rule=Host(`yaade.home`)"      
+      - "traefik.http.routers.yaade.rule=Host(`yaade.home.arap`)"      
       - "traefik.http.routers.yaade.entrypoints=websecure"      
       - 'traefik.http.routers.yaade.tls=true' 
       - "traefik.http.services.yaade.loadbalancer.server.port=9339"
       # http
-      - "traefik.http.routers.yaade-insecure.rule=Host(`yaade.home`)"
+      - "traefik.http.routers.yaade-insecure.rule=Host(`yaade.home.arpa`)"
       - "traefik.http.routers.yaade-insecure.entrypoints=web"
-      # glance
-      - "glance.name=Yaade"
-      - "glance.icon=si:devdotto"
-      - "glance.url=http://yaade.home"
-      - "glance.description=yaade"
-      - "glance.id=yaade"
 
 
 networks:

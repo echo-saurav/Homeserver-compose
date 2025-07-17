@@ -10,8 +10,9 @@ services:
     networks:
       - traefik-net
     volumes:
-      - ~/Public/Media/Downloads:/downloads
-      - ~/Public/Media/Movies:/movies
+      # - ~/Public/Media/Downloads:/downloads
+      # - ~/Public/Media/Movies:/movies
+      - ~/Public/Media:/data
       - ./data/radarr:/config
     ports:
       - 8082:7878
@@ -23,15 +24,66 @@ services:
     labels:
       - "traefik.enable=true"  
       # https
-      - "traefik.http.routers.radarr.rule=Host(`radarr.home`)"      
-      - "traefik.http.routers.radarr.entrypoints=websecure"      
-      - 'traefik.http.routers.radarr.tls=true'      
+      - "traefik.http.routers.radarr.rule=Host(`radarr-auto.home.arpa`)"
+      - "traefik.http.routers.radarr.entrypoints=websecure"
+      - 'traefik.http.routers.radarr.tls=true'
       - "traefik.http.services.radarr.loadbalancer.server.port=7878"
       # http
-      - "traefik.http.routers.radarr-insecure.rule=Host(`radarr.home`)"
+      - "traefik.http.routers.radarr-insecure.rule=Host(`radarr-auto.home.arpa`)"
       - "traefik.http.routers.radarr-insecure.entrypoints=web"
 
 
+  radarr-manual:
+    container_name: radarr-manual
+    image: lscr.io/linuxserver/radarr:latest
+    depends_on:
+      - flaresolverr
+      - transmission
+      - prowlarr
+    networks:
+      - traefik-net
+    volumes:
+      - ~/Public/Media:/data
+      - ./data/radarr-manual:/config
+    ports:
+      - 8043:7878
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      # https
+      - "traefik.http.routers.radarr-manual.rule=Host(`radarr.home.arpa`)"
+      - "traefik.http.routers.radarr-manual.entrypoints=websecure"
+      - 'traefik.http.routers.radarr-manual.tls=true'
+      - "traefik.http.services.radarr-manual.loadbalancer.server.port=7878"
+      # http
+      - "traefik.http.routers.radarr-manual-insecure.rule=Host(`radarr.home.arpa`)"
+      - "traefik.http.routers.radarr-manual-insecure.entrypoints=web"
+
+  # qbittorrent:
+  #   image: lscr.io/linuxserver/qbittorrent:latest
+  #   container_name: qbittorrent
+  #   environment:
+  #     - PUID=${UID}
+  #     - PGID=${GID}
+  #     - TZ=${TZ}
+  #     - WEBUI_PORT=8080
+  #     - TORRENTING_PORT=6881
+  #   ports:
+  #     # for bittorrent traffic
+  #     - 6881:6881/tcp
+  #     - 6881:6881/udp
+  #     # for WebUI
+  #     - 3904:8080/tcp
+  #   stop_grace_period: 30m
+  #   tty: true
+  #   volumes:
+  #     - ./data/qbit/config:/config
+  #     - ./data/qbit/downloads:/downloads
+  #
 
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -43,8 +95,9 @@ services:
       - PGID=${GID}
       - TZ=${TZ}
     volumes: 
-      - ~/Public/Media/TVShows:/tv 
-      - ~/Public/Media/Downloads:/downloads 
+      - ~/Public/Media:/data
+      # - ~/Public/Media/TVShows:/tv 
+      # - ~/Public/Media/Downloads:/downloads 
       - ./data/sonarr:/config
     ports:
       - 8092:8989
@@ -52,45 +105,73 @@ services:
     labels:
       - "traefik.enable=true"  
       # https
-      - "traefik.http.routers.sonarr.rule=Host(`sonarr.home`)"      
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.home.arpa`)"      
       - "traefik.http.routers.sonarr.entrypoints=websecure"      
       - 'traefik.http.routers.sonarr.tls=true'      
       - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
       # http
-      - "traefik.http.routers.sonarr-insecure.rule=Host(`sonarr.home`)"
+      - "traefik.http.routers.sonarr-insecure.rule=Host(`sonarr.home.arpa`)"
       - "traefik.http.routers.sonarr-insecure.entrypoints=web"
 
 
 
-  # bazarr:
-  #   image: lscr.io/linuxserver/bazarr:latest
-  #   container_name: bazarr
-  #   depends_on:
-  #     - whisperasr
-  #   networks:
-  #     - traefik-net
-  #   environment:
-  #     - PUID=${UID}
-  #     - PGID=${GID}
-  #     - TZ=${TZ}
-  #   volumes:
-  #     - ./data/bazarr/config:/config
-  #     - ~/Public/Media/Movies:/movies 
-  #     - ~/Public/Media/TVShows:/tv 
-  #   ports:
-  #     - 6767:6767
-  #   restart: unless-stopped
-  #   labels:
-  #     - "traefik.enable=true"  
-  #     # https
-  #     - "traefik.http.routers.bazarr.rule=Host(`bazarr.home`)"      
-  #     - "traefik.http.routers.bazarr.entrypoints=websecure"      
-  #     - 'traefik.http.routers.bazarr.tls=true'      
-  #     - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
-  #     # http
-  #     - "traefik.http.routers.bazarr-insecure.rule=Host(`bazarr.home`)"
-  #     - "traefik.http.routers.bazarr-insecure.entrypoints=web"
-  #
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    # depends_on:
+    #   - whisperasr
+    networks:
+      - traefik-net
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    volumes:
+      - ./data/bazarr/config:/config
+      - ~/Public/Media:/data
+    ports:
+      - 6767:6767
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      # https
+      - "traefik.http.routers.bazarr.rule=Host(`bazarr.home.arpa`)"
+      - "traefik.http.routers.bazarr.entrypoints=websecure"
+      - 'traefik.http.routers.bazarr.tls=true'
+      - "traefik.http.services.bazarr.loadbalancer.server.port=6767"
+      # http
+      - "traefik.http.routers.bazarr-insecure.rule=Host(`bazarr.home.arpa`)"
+      - "traefik.http.routers.bazarr-insecure.entrypoints=web"
+
+
+  bazarr-manual:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr-manual
+    # depends_on:
+    #   - whisperasr
+    networks:
+      - traefik-net
+    environment:
+      - PUID=${UID}
+      - PGID=${GID}
+      - TZ=${TZ}
+    volumes:
+      - ./data/bazarr-manual/config:/config
+      - ~/Public/Media:/data
+    ports:
+      - 6762:6767
+    restart: unless-stopped
+    labels:
+      - "traefik.enable=true"
+      # https
+      - "traefik.http.routers.bazarr-manual.rule=Host(`bazarr-manual.home.arpa`)"
+      - "traefik.http.routers.bazarr-manual.entrypoints=websecure"
+      - 'traefik.http.routers.bazarr-manual.tls=true'
+      - "traefik.http.services.bazarr-manual.loadbalancer.server.port=6767"
+      # http
+      - "traefik.http.routers.bazarr-manual-insecure.rule=Host(`bazarr-manual.home.arpa`)"
+      - "traefik.http.routers.bazarr-manual-insecure.entrypoints=web"
+
 
   # whisperasr:
   #   image: onerahmet/openai-whisper-asr-webservice:latest
@@ -129,12 +210,12 @@ services:
     labels:
       - "traefik.enable=true"  
       # https
-      - "traefik.http.routers.prowlarr.rule=host(`prowlarr.home`)"      
+      - "traefik.http.routers.prowlarr.rule=host(`prowlarr.home.arpa`)"      
       - "traefik.http.routers.prowlarr.entrypoints=websecure"      
       - 'traefik.http.routers.prowlarr.tls=true' 
       - "traefik.http.services.prowlarr.loadbalancer.server.port=9696"
       # http
-      - "traefik.http.routers.prowlarr-insecure.rule=host(`prowlarr.home`)"
+      - "traefik.http.routers.prowlarr-insecure.rule=host(`prowlarr.home.arpa`)"
       - "traefik.http.routers.prowlarr-insecure.entrypoints=web"
 
 
@@ -170,7 +251,8 @@ services:
       - PEERPORT= 
       - HOST_WHITELIST= 
     volumes:
-      - ~/Public/Media/Downloads:/downloads
+      # - ~/Public/Media/Downloads:/downloads
+      - ~/Public/Media:/data
       - ./data/transmissionic-webui-v1.8.0/:/transmissionic/
       - ./data/transmission/:/config
     ports:
@@ -181,12 +263,12 @@ services:
     labels:
       - "traefik.enable=true"  
       # https
-      - "traefik.http.routers.transmission.rule=host(`transmission.home`)"      
+      - "traefik.http.routers.transmission.rule=host(`transmission.home.arpa`)"      
       - "traefik.http.routers.transmission.entrypoints=websecure"      
       - 'traefik.http.routers.transmission.tls=true'      
       - "traefik.http.services.transmission.loadbalancer.server.port=9091"
       # http
-      - "traefik.http.routers.transmission-insecure.rule=host(`transmission.home`)"
+      - "traefik.http.routers.transmission-insecure.rule=host(`transmission.home.arpa`)"
       - "traefik.http.routers.transmission-insecure.entrypoints=web"
 
 
@@ -210,11 +292,11 @@ services:
       - traefik.enable=true
       # adguard domain
       # https
-      - "traefik.http.routers.jellyseerr-local.rule=Host(`request.home`)"
+      - "traefik.http.routers.jellyseerr-local.rule=Host(`jellyseerr.home.arpa`)"
       - "traefik.http.routers.jellyseerr-local.entrypoints=websecure"
       - "traefik.http.routers.jellyseerr-local.tls=true"
       # http
-      - "traefik.http.routers.jellyseerr-local-insecure.rule=Host(`request.home`)"
+      - "traefik.http.routers.jellyseerr-local-insecure.rule=Host(`jellyseerr.home.arpa`)"
       - "traefik.http.routers.jellyseerr-local-insecure.entrypoints=web"
       - traefik.http.services.jellyseerr.loadbalancer.server.port=5055
 
@@ -256,6 +338,11 @@ services:
     image: ghcr.io/cleanuparr/cleanuparr:latest
     container_name: cleanuparr
     restart: unless-stopped
+    depends_on:
+      - radarr
+      - radarr-manual
+      - sonarr
+      - transmission
     networks:
       - traefik-net
     ports:
@@ -269,12 +356,27 @@ services:
       - UMASK=022
       - TZ=${TZ}
       # - BASE_PATH=
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.clean.rule=Host(`clean.home.arpa`)"
+      - "traefik.http.routers.clean.entrypoints=websecure"
+      - 'traefik.http.routers.clean.tls=true'
+      - "traefik.http.services.clean.loadbalancer.server.port=11011"
+      # http
+      - "traefik.http.routers.clean-insecure.rule=Host(`clean.home.arpa`)"
+      - "traefik.http.routers.clean-insecure.entrypoints=web"
 
 
   huntarr:
     image: ghcr.io/plexguide/huntarr:latest
     container_name: huntarr
     restart: unless-stopped
+    depends_on:
+      - radarr
+      - radarr-manual
+      - sonarr
+      - transmission
     networks:
       - traefik-net
     ports:
@@ -283,6 +385,16 @@ services:
       - ./data//huntarr:/config
     environment:
       - TZ=${TZ}
+    labels:
+      - "traefik.enable=true"  
+      # https
+      - "traefik.http.routers.hunterr.rule=Host(`hunterr.home.arpa`)"
+      - "traefik.http.routers.hunterr.entrypoints=websecure"
+      - 'traefik.http.routers.hunterr.tls=true'
+      - "traefik.http.services.hunterr.loadbalancer.server.port=9705"
+      # http
+      - "traefik.http.routers.hunterr-insecure.rule=Host(`hunterr.home.arpa`)"
+      - "traefik.http.routers.hunterr-insecure.entrypoints=web"
 
 
 

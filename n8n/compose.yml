@@ -37,12 +37,12 @@ services:
     labels:
       - "traefik.enable=true"
       # https
-      - "traefik.http.routers.n8n.rule=Host(`n8n.home`)"
+      - "traefik.http.routers.n8n.rule=Host(`n8n.home.arpa`)"
       - "traefik.http.routers.n8n.entrypoints=websecure"
       - 'traefik.http.routers.n8n.tls=true'
       - "traefik.http.services.n8n.loadbalancer.server.port=5673"
       # http
-      - "traefik.http.routers.n8n-insecure.rule=Host(`n8n.home`)"
+      - "traefik.http.routers.n8n-insecure.rule=Host(`n8n.home.arpa`)"
       - "traefik.http.routers.n8n-insecure.entrypoints=web"
 
 

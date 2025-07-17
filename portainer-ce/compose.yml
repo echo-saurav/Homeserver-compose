@@ -16,7 +16,7 @@ services:
     labels:
       - "traefik.enable=true"  
       # https
-      - "traefik.http.routers.portainer.rule=Host(`portainer.home`)"      
+      - "traefik.http.routers.portainer.rule=Host(`portainer.home.arpa`)"      
       - "traefik.http.routers.portainer.entrypoints=websecure"      
       - "traefik.http.routers.portainer.tls=true"     
       - "traefik.http.services.portainer.loadbalancer.server.port=9443"

@@ -18,19 +18,13 @@ services:
     labels:
       - "traefik.enable=true"
       # https
-      - "traefik.http.routers.gitea.rule=Host(`gitea.home`)"
+      - "traefik.http.routers.gitea.rule=Host(`gitea.home.arpa`)"
       - "traefik.http.routers.gitea.entrypoints=websecure"
       - 'traefik.http.routers.gitea.tls=true'
       - "traefik.http.services.gitea.loadbalancer.server.port=3000"
       # http
-      - "traefik.http.routers.gitea-insecure.rule=Host(`gitea.home`)"
+      - "traefik.http.routers.gitea-insecure.rule=Host(`gitea.home.arpa`)"
       - "traefik.http.routers.gitea-insecure.entrypoints=web"
-      # glance
-      - "glance.name=gitea"
-      - "glance.icon=si:gitea"
-      - "glance.url=http://gitea.home"
-      - "glance.description=Gitea github alternative"
-      - "glance.id=gitea"
 
 networks:
   traefik-net:

@@ -24,12 +24,12 @@ services:
     labels:
       - "traefik.enable=true"
       # https
-      - "traefik.http.routers.yt.rule=Host(`youtube-dl.home`)"
+      - "traefik.http.routers.yt.rule=Host(`youtube-dl.home.arpa`)"
       - "traefik.http.routers.yt.entrypoints=websecure"
       - 'traefik.http.routers.yt.tls=true'
       - "traefik.http.services.yt.loadbalancer.server.port=17442"
       # http
-      - "traefik.http.routers.yt-insecure.rule=Host(`youtube-dl.home`)"
+      - "traefik.http.routers.yt-insecure.rule=Host(`youtube-dl.home.arpa`)"
       - "traefik.http.routers.yt-insecure.entrypoints=web"
 
 

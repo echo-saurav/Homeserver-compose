@@ -22,12 +22,6 @@ services:
       # http
       - "traefik.http.routers.beszel-insecure.rule=host(`beszel.home.arpa`)"
       - "traefik.http.routers.beszel-insecure.entrypoints=web"
-      # glance
-      - "glance.name=Beszel"
-      - "glance.icon=si:chartdotjs"
-      - "glance.url=http://beszel.home.arpa"
-      - "glance.description=Beszel monitoring"
-      - "glance.id=beszel"
 
 
   beszel-agent:
@@ -48,9 +42,6 @@ services:
       KEY: '${KEY}'
       # Do not remove quotes around the key
       #KEY: 'UPDATE WITH YOUR PUBLIC KEY (copy from "Add system" dialog)'
-    labels:
-      - "glance.parent=beszel"
-      - "glance.name=Agent"
 
 networks:
   traefik-net:

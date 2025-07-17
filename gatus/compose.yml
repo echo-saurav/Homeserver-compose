@@ -24,19 +24,13 @@ services:
     labels:
       - "traefik.enable=true"
       # https
-      - "traefik.http.routers.gatus.rule=Host(`gatus.home`)"
+      - "traefik.http.routers.gatus.rule=Host(`gatus.home.arpa`)"
       - "traefik.http.routers.gatus.entrypoints=websecure"
       - 'traefik.http.routers.gatus.tls=true'
       - "traefik.http.services.gatus.loadbalancer.server.port=8080"
       # http
-      - "traefik.http.routers.gatus-insecure.rule=Host(`gatus.home`)"
+      - "traefik.http.routers.gatus-insecure.rule=Host(`gatus.home.arpa`)"
       - "traefik.http.routers.gatus-insecure.entrypoints=web"
-      # glance
-      - "glance.name=Gatus"
-      - "glance.icon=si:downdetector"
-      - "glance.url=http://gatus.home"
-      - "glance.description=Gatus down detector"
-      - "glance.id=gatus"
 
 
 

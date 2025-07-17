@@ -22,20 +22,13 @@ services:
     labels:
       - traefik.enable=true
       # https
-      - traefik.http.routers.traefik.rule=Host(`traefik.home`)
+      - traefik.http.routers.traefik.rule=Host(`traefik.home.arpa`)
       - traefik.http.routers.traefik.entrypoints=websecure
       - traefik.http.routers.traefik.tls=true
       - traefik.http.services.traefik.loadbalancer.server.port=8080
       # http
-      - traefik.http.routers.traefik-insecure.rule=Host(`traefik.home`)
+      - traefik.http.routers.traefik-insecure.rule=Host(`traefik.home.arpa`)
       - traefik.http.routers.traefik-insecure.entrypoints=web
-      # glance
-      - "glance.name=traefik"
-      - "glance.icon=si:traefikproxy"
-      - "glance.url=http://traefik.home"
-      - "glance.description=Traefik"
-      - "glance.id=traefik"
-
 
   mkcert:
     image: vishnunair/docker-mkcert
@@ -47,9 +40,6 @@ services:
       - domain=*.home,*.home.arpa
     volumes:
       - ./data/mkcert:/root/.local/share/mkcert
-    labels:
-      - "glance.parent=traefik"
-      - "glance.name=mkcert"
 
 
 

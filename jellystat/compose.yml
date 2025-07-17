@@ -22,19 +22,13 @@ services:
     labels:
       - "traefik.enable=true"  
       # https
-      - "traefik.http.routers.jellystat.rule=host(`jellystat.home`)"
+      - "traefik.http.routers.jellystat.rule=host(`jellystat.home.arpa`)"
       - "traefik.http.routers.jellystat.entrypoints=websecure"
       - "traefik.http.routers.jellystat.tls=true"
       - "traefik.http.services.jellystat.loadbalancer.server.port=3000"
       # http
-      - "traefik.http.routers.jellystat-insecure.rule=host(`jellystat.home`)"
+      - "traefik.http.routers.jellystat-insecure.rule=host(`jellystat.home.arpa`)"
       - "traefik.http.routers.jellystat-insecure.entrypoints=web"
-      # glance
-      - "glance.name=Jellystat"
-      - "glance.icon=si:jellyfin"
-      - "glance.url=http://jellystat.home"
-      - "glance.description=Jellystat jellyfin logs"
-      - "glance.id=jellystat"
 
   jellystat-db:
     image: postgres:15.2
