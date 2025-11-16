@@ -1,68 +1,106 @@
 ---
 services:
-  kavita:
+  # kavita:
+  #   image: jvmilazz0/kavita:latest
+  #   container_name: kavita
+  #   networks:
+  #     - traefik-net
+  #   volumes:
+  #     - ~/Public/Books/Kavita:/books
+  #     - ~/Public/Books/Opendir:/opendir
+  #     - ./data/kavita:/kavita/config
+  #   environment:
+  #     - TZ=${TZ}
+  #   ports:
+  #     - 5004:5000
+  #   restart: unless-stopped
+  #   labels:
+  #     - "traefik.enable=true"
+  #     # https
+  #     # duck dns
+  #     - "traefik.http.routers.kavita-duck.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/books`)"
+  #     - "traefik.http.routers.kavita-duck.entrypoints=websecure"
+  #     - "traefik.http.routers.kavita-duck.tls=true"
+  #     # duck dns ssl
+  #     - "traefik.http.routers.kavita-duck.tls.certresolver=myresolver"
+  #     # adguard dns
+  #     - "traefik.http.routers.kavita.rule=host(`books.home.arpa`)"
+  #     - "traefik.http.routers.kavita.entrypoints=websecure"
+  #     - 'traefik.http.routers.kavita.tls=true'
+  #     - "traefik.http.services.kavita.loadbalancer.server.port=5000"
+  #     # http
+  #     - "traefik.http.routers.kavita-insecure.rule=host(`books.home.arpa`)"
+  #     - "traefik.http.routers.kavita-insecure.entrypoints=web"
+  #     # glance
+  #     - "glance.name=Kavita"
+  #     - "glance.icon=si:bookstack"
+  #     - "glance.url=https://${DUCK_BASE}/books"
+  #     - "glance.description=Books reading"
+  #     - "glance.id=kavita"
+  #
+
+  # calibre:
+  #   # image: lscr.io/linuxserver/calibre:latest
+  #   image: linuxserver/calibre:amd64-version-v7.19.0
+  #   container_name: calibre
+  #   security_opt:
+  #     - seccomp:unconfined #optional
+  #   environment:
+  #     - PUID=${UID}
+  #     - PGID=${GID}
+  #     - TZ=${TZ}
+  #     # - PASSWORD= #optional
+  #     # - CLI_ARGS= #optional
+  #   volumes:
+  #     - ./data/calibre/config:/config
+  #     - ~/Public/Books/:/calibre-library
+  #   ports:
+  #     - 8020:8080
+  #     # - 8121:8181
+  #     # - 8021:8081
+  #   # restart: unless-stopped
+  #   restart: no
+  #
+
+  kavita-book:
     image: jvmilazz0/kavita:latest
-    container_name: kavita
+    container_name: kavita-book
     networks:
       - traefik-net
     volumes:
-      - ~/Public/Books/Kavita:/books
-      - ~/Public/Books/Opendir:/opendir
-      - ./data/kavita:/kavita/config
+      - ~/Public/Books/Library:/books/general
+      - ~/Public/Books/Others:/books/others
+      - ./data/kavita-book:/kavita/config
     environment:
       - TZ=${TZ}
     ports:
-      - 5004:5000
+      - 5002:5000
     restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      # https
-      # duck dns
-      - "traefik.http.routers.kavita-duck.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/books`)"
-      - "traefik.http.routers.kavita-duck.entrypoints=websecure"
-      - "traefik.http.routers.kavita-duck.tls=true"
-      # duck dns ssl
-      - "traefik.http.routers.kavita-duck.tls.certresolver=myresolver"
-      # adguard dns
-      - "traefik.http.routers.kavita.rule=host(`books.home.arpa`)"
-      - "traefik.http.routers.kavita.entrypoints=websecure"
-      - 'traefik.http.routers.kavita.tls=true'
-      - "traefik.http.services.kavita.loadbalancer.server.port=5000"
-      # http
-      - "traefik.http.routers.kavita-insecure.rule=host(`books.home.arpa`)"
-      - "traefik.http.routers.kavita-insecure.entrypoints=web"
-      # glance
-      - "glance.name=Kavita"
-      - "glance.icon=si:bookstack"
-      - "glance.url=https://${DUCK_BASE}/books"
-      - "glance.description=Books reading"
-      - "glance.id=kavita"
 
-
-  calibre:
-    # image: lscr.io/linuxserver/calibre:latest
-    image: linuxserver/calibre:amd64-version-v7.19.0
-    container_name: calibre
-    security_opt:
-      - seccomp:unconfined #optional
+  calibre-web-automated:
+    image: crocodilestick/calibre-web-automated:latest
+    container_name: calibre-web-automated
     environment:
       - PUID=${UID}
       - PGID=${GID}
       - TZ=${TZ}
-      # - PASSWORD= #optional
-      # - CLI_ARGS= #optional
     volumes:
-      - ./data/calibre/config:/config
-      - ~/Public/Books/:/calibre-library
+      # CW users migrating should stop their existing CW instance,
+      # make a copy of the config folder,
+      # and bind that here to carry over all of their user settings ect.
+      - ./data/calibre-web-automated:/config
+      # This is an ingest dir, NOT a library one.
+      # Anything added here will be automatically added to your library 
+      # according to the settings you have configured in CWA Settings page. 
+      # All files placed here are REMOVED AFTER PROCESSING
+      - ~/Public/Books/Processing/:/cwa-book-ingest
+      # If you don't have an existing library,
+      # CWA will automatically create one at the bind provided here
+      - ~/Public/Books/Library/:/calibre-library
     ports:
-      - 8020:8080
-      # - 8121:8181
-      # - 8021:8081
-    # restart: unless-stopped
-    restart: no
-    labels:
-      - "glance.parent=kavita"
-      - "glance.name=calibre"
+      - 7083:8083
+    restart: unless-stopped
+
 
 
 networks:
