@@ -47,29 +47,29 @@ services:
 
 
 
-  fladder:
-    image: ghcr.io/donutware/fladder:latest
-    container_name: fladder
-    networks:
-      - traefik-net
-    ports:
-      - 4443:80
-    environment:
-      #- BASE_URL=`${DUCK_JELLYFIN}`
-      - BASE_URL="https://saurav-server.duckdns.org/movie"
-    restart: unless-stopped
-    labels:
-      - "traefik.enable=true"
-      # http
-      - "traefik.http.routers.fladder-local-insecure.rule=Host(`newuimovie.home.arpa`)"
-      - "traefik.http.routers.fladder-local-insecure.entrypoints=web"
-      # https
-      - "traefik.http.routers.fladder.tls=true"
-      - "traefik.http.routers.fladder.rule=Host(`newuimovie.home.arpa`)"
-      - "traefik.http.routers.fladder.entrypoints=websecure"
-      # service
-      - "traefik.http.services.fladder.loadbalancer.server.port=80"
-
+  # fladder:
+  #   image: ghcr.io/donutware/fladder:latest
+  #   container_name: fladder
+  #   networks:
+  #     - traefik-net
+  #   ports:
+  #     - 4443:80
+  #   environment:
+  #     #- BASE_URL=`${DUCK_JELLYFIN}`
+  #     - BASE_URL="https://saurav-server.duckdns.org/movie"
+  #   restart: unless-stopped
+  #   labels:
+  #     - "traefik.enable=true"
+  #     # http
+  #     - "traefik.http.routers.fladder-local-insecure.rule=Host(`newuimovie.home.arpa`)"
+  #     - "traefik.http.routers.fladder-local-insecure.entrypoints=web"
+  #     # https
+  #     - "traefik.http.routers.fladder.tls=true"
+  #     - "traefik.http.routers.fladder.rule=Host(`newuimovie.home.arpa`)"
+  #     - "traefik.http.routers.fladder.entrypoints=websecure"
+  #     # service
+  #     - "traefik.http.services.fladder.loadbalancer.server.port=80"
+  #
 
 networks:
   traefik-net:
