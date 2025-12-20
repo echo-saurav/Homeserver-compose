@@ -10,8 +10,6 @@ services:
     networks:
       - traefik-net
     volumes:
-      # - ~/Public/Media/Downloads:/downloads
-      # - ~/Public/Media/Movies:/movies
       - ~/Public/Media:/data
       - ./data/radarr:/config
     ports:
@@ -96,8 +94,6 @@ services:
       - TZ=${TZ}
     volumes: 
       - ~/Public/Media:/data
-      # - ~/Public/Media/TVShows:/tv 
-      # - ~/Public/Media/Downloads:/downloads 
       - ./data/sonarr:/config
     ports:
       - 8092:8989
@@ -105,9 +101,9 @@ services:
     labels:
       - "traefik.enable=true"  
       # https
-      - "traefik.http.routers.sonarr.rule=Host(`sonarr.home.arpa`)"      
-      - "traefik.http.routers.sonarr.entrypoints=websecure"      
-      - 'traefik.http.routers.sonarr.tls=true'      
+      - "traefik.http.routers.sonarr.rule=Host(`sonarr.home.arpa`)"
+      - "traefik.http.routers.sonarr.entrypoints=websecure"
+      - 'traefik.http.routers.sonarr.tls=true'
       - "traefik.http.services.sonarr.loadbalancer.server.port=8989"
       # http
       - "traefik.http.routers.sonarr-insecure.rule=Host(`sonarr.home.arpa`)"
@@ -228,11 +224,11 @@ services:
     environment:
       - LOG_LEVEL=${LOG_LEVEL:-info}
       - LOG_HTML=${LOG_HTML:-false}
-      - CAPTCHA_SOLVER=${CAPTCHA_SOLVER:-none}
+      - CAPTCHA_SOLVER=hcaptcha-solver
       - TZ=${TZ}
     ports:
       - "${PORT:-8192}:8191"
-    restart: unless-stopped         
+    restart: unless-stopped
 
 
   transmission:
@@ -244,14 +240,13 @@ services:
       - PUID=${UID}
       - PGID=${GID}
       - TZ=${TZ}
-      - TRANSMISSION_WEB_HOME=/transmissionic/ #optional
+      - TRANSMISSION_WEB_HOME=/transmissionic/
       - USER=${USER}
       - PASS=${PASS}
       - WHITELIST= 
       - PEERPORT= 
       - HOST_WHITELIST= 
     volumes:
-      # - ~/Public/Media/Downloads:/downloads
       - ~/Public/Media:/data
       - ./data/transmissionic-webui-v1.8.0/:/transmissionic/
       - ./data/transmission/:/config
@@ -263,9 +258,9 @@ services:
     labels:
       - "traefik.enable=true"  
       # https
-      - "traefik.http.routers.transmission.rule=host(`transmission.home.arpa`)"      
-      - "traefik.http.routers.transmission.entrypoints=websecure"      
-      - 'traefik.http.routers.transmission.tls=true'      
+      - "traefik.http.routers.transmission.rule=host(`transmission.home.arpa`)"
+      - "traefik.http.routers.transmission.entrypoints=websecure"
+      - 'traefik.http.routers.transmission.tls=true'
       - "traefik.http.services.transmission.loadbalancer.server.port=9091"
       # http
       - "traefik.http.routers.transmission-insecure.rule=host(`transmission.home.arpa`)"
@@ -395,7 +390,6 @@ services:
       # http
       - "traefik.http.routers.hunterr-insecure.rule=Host(`hunterr.home.arpa`)"
       - "traefik.http.routers.hunterr-insecure.entrypoints=web"
-
 
 
 networks:
