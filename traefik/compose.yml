@@ -17,6 +17,7 @@ services:
       - ./data/traefikConf:/etc/traefik
       - ./data/mkcert:/mkcert
       - ./data/letsencrypt:/letsencrypt
+      - ./data/logs:/logs
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
      - traefik-net
