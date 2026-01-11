@@ -10,14 +10,16 @@ services:
     # build: Compose builds the image. Compose rebuilds the image if it's already present.
     # pull_policy: always
     volumes:
-      - ./data/config/:/app/config
-      - ./data/assets/:/assets
+      - ./data/glance-config/config/:/app/config
+      - ./data/glance-config/assets/:/app/assets
       # host time setting
       - /etc/timezone:/etc/timezone:ro
       - /etc/localtime:/etc/localtime:ro
-      # - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
     # environment:
     #   - DOCKER_HOST=tcp://dockerproxy-glance:2375
+    env_file:
+      - ./.env
     ports:
       - 6149:8080
     restart: unless-stopped
@@ -37,6 +39,23 @@ services:
       # http
       - "traefik.http.routers.glanceapp-insecure.rule=host(`glanceapp.home.arpa`)"
       - "traefik.http.routers.glanceapp-insecure.entrypoints=web"
+
+
+  # calander
+  glances-ical-api:
+    image: ghcr.io/awildleon/glance-ical-events:latest
+    container_name: glances-ical-api
+    restart: unless-stopped
+    networks:
+      - traefik-net
+
+  # download stat
+  glance-transmission:
+    image: ghcr.io/xtrems876/glance-transmission:latest
+    container_name: glance-transmission
+    restart: unless-stopped
+    networks:
+      - traefik-net
 
 
   # dockerproxy-glance:
