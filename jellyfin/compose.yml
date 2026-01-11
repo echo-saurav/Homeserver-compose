@@ -10,11 +10,13 @@ services:
       - PGID=${GID}
       - JELLYFIN_PublishedServerUrl=${DUCK_JELLYFIN}
     volumes:
-      - ./data/config:/config
-      - ./data/cache:/cache
-      - ./data/jellyfinConfig.json:/jellyfin/jellyfin-web/config.json
+      - ./data/jellyfin/config:/config
+      - ./data/jellyfin/cache:/cache
+      - ./data/jellyfin/jellyfinConfig.json:/jellyfin/jellyfin-web/config.json
       - ~/Public/Media:/media
       - /etc/localtime:/etc/localtime:ro
+      # custom
+      - ./data/custom:/jellyfin/jellyfin-web/custom:ro
     devices:
       # - /dev/dri/renderD128:/dev/dri/renderD128
       # - /dev/dri/card0:/dev/dri/card0    
@@ -29,11 +31,11 @@ services:
       - "traefik.enable=true"  
       # adguard domain
       # secure
-      - "traefik.http.routers.jellyfin-local.rule=Host(`movie.home`)"
+      - "traefik.http.routers.jellyfin-local.rule=Host(`movie.home.arpa`)"
       - "traefik.http.routers.jellyfin-local.entrypoints=websecure"
       - "traefik.http.routers.jellyfin-local.tls=true"
       # insecure
-      - "traefik.http.routers.jellyfin-local-insecure.rule=Host(`movie.home`)"
+      - "traefik.http.routers.jellyfin-local-insecure.rule=Host(`movie.home.arpa`)"
       - "traefik.http.routers.jellyfin-local-insecure.entrypoints=web"
       # https
       - "traefik.http.routers.jellyfin.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/movie`)"
@@ -44,7 +46,6 @@ services:
       # http
       - "traefik.http.routers.jellyfin-insecure.rule=Host(`${DUCK_BASE}`) && PathPrefix(`/movie`)"
       - "traefik.http.routers.jellyfin-insecure.entrypoints=web"
-
 
 
   # fladder:
