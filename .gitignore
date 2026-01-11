@@ -5,6 +5,9 @@
 # Allow .env files in subdirectories
 !*/.env
 
+# ignore ai api env file
+*/ai.env
+
 
 # Ignore all docker data dir
 */data

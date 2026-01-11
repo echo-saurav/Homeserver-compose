@@ -1,0 +1,107 @@
+---
+services:
+  stash:
+    image: stashapp/stash:latest
+    container_name: stashapp
+    restart: unless-stopped
+    ports:
+      - 9999:9999
+    environment:
+      - STASH_PORT=9999
+    volumes:
+      ## Point this at your collection.
+      - ~/Public/Others/Stash:/data
+      ## sync local time
+      - /etc/localtime:/etc/localtime:ro
+      ## Adjust below paths (the left part) to your liking.
+      ## E.g. you can change ./config:/root/.stash to ./stash:/root/.stash
+      ## Keep configs, scrapers, and plugins here.
+      - ./data/stash/config:/root/.stash
+      ## This is where your stash's metadata lives
+      - ./data/stash/metadata:/metadata
+      ## Any other cache content.
+      - ./data/stash/cache:/cache
+      ## Where to store binary blob data (scene covers, images)
+      - ./data/stash/blobs:/blobs
+      ## Where to store generated content (screenshots,previews,transcodes,sprites)
+      - ./data/stash/generated:/generated
+    networks:
+      - traefik-net
+    labels:
+      - "traefik.enable=true"
+      # https
+      - "traefik.http.routers.stash.rule=Host(`stash.home.arpa`)"
+      - "traefik.http.routers.stash.entrypoints=websecure"
+      - 'traefik.http.routers.stash.tls=true'
+      - "traefik.http.services.stash.loadbalancer.server.port=9999"
+      # http
+      - "traefik.http.routers.stash-insecure.rule=Host(`stash.home.arpa`)"
+      - "traefik.http.routers.stash-insecure.entrypoints=web"
+
+
+  # metube:
+  #   # image: ghcr.io/alexta69/metube
+  #   image: alexta69/metube:latest
+  #   container_name: metube
+  #   # uncomment this if you want downalod through vpn
+  #   network_mode: "container:gluetun-private"
+  #   depends_on:
+  #     - gluetun
+  #   restart: unless-stopped
+  #   # ports:
+  #   #   - 8081:8081
+  #   volumes:
+  #     - ~/Public/Others/Stash:/downloads
+  #     - ./data/cookies:/cookies
+  #   # networks:
+  #   #   - traefik-net
+  #   environment:
+  #     - UID=${UID}
+  #     - GID=${GID}
+  #     - YTDL_OPTIONS={"cookiefile":"/cookies/cookies.txt"}
+  #     - MAX_CONCURRENT_DOWNLOADS=20
+  #
+  #
+  #
+  # # VPN 
+  # #
+  # gluetun:
+  #   image: qmcgaw/gluetun:v3
+  #   restart: unless-stopped
+  #   container_name: gluetun-private
+  #   networks:
+  #     - traefik-net
+  #   cap_add:
+  #     - NET_ADMIN
+  #   devices:
+  #     - /dev/net/tun:/dev/net/tun
+  #   ports:
+  #     - 8888:8888/tcp # HTTP proxy
+  #     - 8388:8388/tcp # Shadowsocks
+  #     - 8388:8388/udp # Shadowsocks
+  #     - 8081:8081
+  #   volumes:
+  #     - ./data/youtube-dl/gluetun:/gluetun
+  #   environment:
+  #     - VPN_SERVICE_PROVIDER=protonvpn
+  #     - OPENVPN_USER=${VPN_USER}
+  #     - OPENVPN_PASSWORD=${VPN_PASS}
+  #     - SERVER_COUNTRIES=Japan
+  #     - TZ=${TZ}
+  #     - UPDATER_PERIOD=
+  #   labels:
+  #     - "traefik.enable=true"
+  #     # https
+  #     - "traefik.http.routers.metube.rule=Host(`metube.home.arpa`)"
+  #     - "traefik.http.routers.metube.entrypoints=websecure"
+  #     - 'traefik.http.routers.metube.tls=true'
+  #     - "traefik.http.services.metube.loadbalancer.server.port=8081"
+  #     # http
+  #     - "traefik.http.routers.metube-insecure.rule=Host(`metube.home.arpa`)"
+  #     - "traefik.http.routers.metube-insecure.entrypoints=web"
+  #
+
+networks:
+  traefik-net:
+    external: true
+    name: traefik-net
