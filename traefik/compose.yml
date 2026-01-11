@@ -1,7 +1,8 @@
 ---
 services:
   traefik:
-    image: traefik:v3.1.3
+    # image: traefik:v3.1.3
+    image: traefik:v3.6.5
     container_name: traefik
     restart: always
     # mem_limit: 30m
@@ -37,7 +38,7 @@ services:
     networks:
       - traefik-net
     environment:
-      - domain=*.home,*.home.arpa
+      - domain=*.home.arpa
     volumes:
       - ./data/mkcert:/root/.local/share/mkcert
 
