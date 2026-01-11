@@ -285,6 +285,12 @@ services:
     restart: unless-stopped
     labels:
       - traefik.enable=true
+      # # https
+      # - "traefik.http.routers.jellyseerr-duck.rule=host(`${DUCK_JELLYSEERR}`)"
+      # - "traefik.http.routers.jellyseerr-duck.entrypoints=websecure"
+      # - "traefik.http.routers.jellyseerr-duck.tls=true"
+      # duck dns ssl
+      # - "traefik.http.routers.jellyseerr-duck.tls.certresolver=myresolver"
       # adguard domain
       # https
       - "traefik.http.routers.jellyseerr-local.rule=Host(`jellyseerr.home.arpa`)"
@@ -390,7 +396,6 @@ services:
       # http
       - "traefik.http.routers.hunterr-insecure.rule=Host(`hunterr.home.arpa`)"
       - "traefik.http.routers.hunterr-insecure.entrypoints=web"
-
 
 networks:
   traefik-net:
